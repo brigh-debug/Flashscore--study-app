@@ -23,8 +23,11 @@ const quickMenuItems = [
   { label: '✍️ Author', link: '/author' },
 ];
 
-export default function Navbar() {
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  // Toggle mobile menu
+  const handleMenuToggle = () => setMenuOpen((open) => !open);
+  // Toggle submenus (mobile only)
+  const handleSubmenuToggle = (id: string) =>
+    setSubmenuOpen((open) => (open === id ? null : id));
 
   return (
     <nav className="bg-[#0a0e1a] text-white shadow-md fixed top-0 w-full z-50">
