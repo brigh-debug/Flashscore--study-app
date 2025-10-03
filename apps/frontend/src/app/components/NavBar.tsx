@@ -23,11 +23,8 @@ const quickMenuItems = [
   { label: '✍️ Author', link: '/author' },
 ];
 
-  // Toggle mobile menu
-  const handleMenuToggle = () => setMenuOpen((open) => !open);
-  // Toggle submenus (mobile only)
-  const handleSubmenuToggle = (id: string) =>
-    setSubmenuOpen((open) => (open === id ? null : id));
+export default function Navbar() {
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   return (
     <nav className="bg-[#0a0e1a] text-white shadow-md fixed top-0 w-full z-50">
@@ -45,7 +42,7 @@ const quickMenuItems = [
             >
               ⚡ Sports Central
             </a>
-            
+
             {/* Hover Menu - Only shows on hover */}
             <div className="absolute left-0 top-full mt-2 bg-[#1f2937] rounded-md shadow-lg overflow-hidden z-50 min-w-[200px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
               {quickMenuItems.map((item) => (
