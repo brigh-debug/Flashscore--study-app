@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import PWAInstaller from "./components/PWAInstaller";
 import Navbar from "./components/NavBar";
 
-const AdvancedAnalytics = dynamic(() => import('./components/AdvancedAnalytics'), {
+const AdvancedAnalytics = dynamic(() => import('@/components/AdvancedAnalytics'), {
   ssr: false,
   loading: () => <div className="loading-skeleton">Loading analytics...</div>
 });
