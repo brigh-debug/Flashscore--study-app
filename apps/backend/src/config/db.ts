@@ -44,7 +44,8 @@ export const connectDB = async (): Promise<void> => {
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
       bufferMaxEntries: 0,
-      bufferCommands: false,
+      useNewUrlParser: true,
+      useUnifiedTopology: true
     };
 
     // Add server API settings for Atlas connections
@@ -99,14 +100,14 @@ export const connectDB = async (): Promise<void> => {
       console.error('Error details:', err.message);
       console.error('Stack trace:', err.stack);
     } else {
-      console.error('Unknown error:', err);
+      coconsole.error('Unknown error:', err);
     }
 
     if (process.env.NODE_ENV === 'production') {
       console.log('⚠️  Retrying connection in 5 seconds...');
       setTimeout(() => connectDB(), 5000);
     } else {
-      throw err;
+      process.exit(1);
     }
   }
 };
