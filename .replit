@@ -278,17 +278,10 @@ task = "shell.exec"
 args = "cd apps/frontend && pnpm dev"
 
 [[ports]]
-localPort = 3000
-externalPort = 3000
-exposeLocalhost = true
-
-[[ports]]
-localPort = 3001
-
-[[ports]]
 localPort = 5000
 externalPort = 80
 
+<<<<<<< HEAD
 [[ports]]
 localPort = 35831
 externalPort = 3003
@@ -301,5 +294,7 @@ externalPort = 3001
 localPort = 44397
 externalPort = 3002
 
+=======
+>>>>>>> 4b332a1 (Update replit)
 [agent]
 expertMode = true
