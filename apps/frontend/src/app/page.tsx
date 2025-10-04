@@ -28,17 +28,48 @@ const LiveMatchProbabilityTracker = dynamic(
 );
 
 export default function HomePage() {
-  const [activeTab, setActiveTab] = useState<"live" | "finished" | "scheduled">(
-    "live",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "overview" | "analytics" | "predictions"
+  >("overview");
   const [selectedSport, setSelectedSport] = useState<string>("all");
 
   const sports = [
-    { id: "all", name: "ALL", icon: "⚽" },
-    { id: "football", name: "FOOTBALL", icon: "⚽" },
-    { id: "basketball", name: "BASKETBALL", icon: "🏀" },
-    { id: "tennis", name: "TENNIS", icon: "🎾" },
-    { id: "cricket", name: "CRICKET", icon: "🏏" },
+    { id: "all", name: "All Sports", icon: "⚽" },
+    { id: "football", name: "Football", icon: "⚽" },
+    { id: "basketball", name: "Basketball", icon: "🏀" },
+    { id: "tennis", name: "Tennis", icon: "🎾" },
+    { id: "cricket", name: "Cricket", icon: "🏏" },
+  ];
+
+  const dashboardStats = [
+    {
+      label: "Active Users",
+      value: "2,341",
+      change: "+12.5%",
+      icon: "👥",
+      color: "from-blue-500 to-blue-600",
+    },
+    {
+      label: "Predictions Today",
+      value: "847",
+      change: "+8.3%",
+      icon: "🎯",
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      label: "Accuracy Rate",
+      value: "78.5%",
+      change: "+2.1%",
+      icon: "📈",
+      color: "from-green-500 to-green-600",
+    },
+    {
+      label: "Pi Coins Earned",
+      value: "3,420",
+      change: "+420",
+      icon: "💰",
+      color: "from-yellow-500 to-yellow-600",
+    },
   ];
 
   const liveMatches = [
@@ -75,25 +106,27 @@ export default function HomePage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#1a1a1a] text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       {/* Top Navigation Bar */}
       <Navbar />
 
-      {/* FlashScore-style Header */}
-      <div className="bg-[#222] border-b border-[#333]">
-        <div className="max-w-7xl mx-auto px-3 py-2">
+      {/* Header with Glassmorphism */}
+      <div className="bg-white/5 backdrop-blur-xl border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold text-[#f4a11d]">LIVESCORE</h1>
-              <div className="flex gap-1">
+            <div className="flex items-center gap-6">
+              <h1 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                Live Score
+              </h1>
+              <div className="flex gap-2">
                 {sports.map((sport) => (
                   <button
                     key={sport.id}
                     onClick={() => setSelectedSport(sport.id)}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded transition-colors ${
+                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-all duration-300 ${
                       selectedSport === sport.id
-                        ? "bg-[#f4a11d] text-black"
-                        : "bg-[#2a2a2a] text-gray-400 hover:bg-[#333]"
+                        ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white shadow-lg shadow-cyan-500/50 scale-105"
+                        : "bg-white/10 text-gray-300 hover:bg-white/20"
                     }`}
                   >
                     {sport.icon} {sport.name}
@@ -106,28 +139,32 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Match Tabs */}
-      <div className="bg-[#1e1e1e] border-b border-[#333]">
-        <div className="max-w-7xl mx-auto px-3">
-          <div className="flex gap-6">
-            {["live", "finished", "scheduled"].map((tab) => (
+      {/* Tab Navigation */}
+      <div className="bg-black/20 backdrop-blur-lg border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="flex gap-8">
+            {[
+              { key: "overview", label: "Overview", count: 3 },
+              { key: "analytics", label: "Analytics" },
+              { key: "predictions", label: "Predictions" },
+            ].map((tab) => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab as any)}
-                className={`py-3 text-sm font-semibold uppercase relative ${
-                  activeTab === tab
-                    ? "text-[#f4a11d]"
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key as any)}
+                className={`py-4 text-sm font-bold uppercase relative transition-all ${
+                  activeTab === tab.key
+                    ? "text-cyan-400"
                     : "text-gray-400 hover:text-white"
                 }`}
               >
-                {tab}
-                {activeTab === tab && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#f4a11d]" />
-                )}
-                {tab === "live" && (
-                  <span className="ml-2 px-1.5 py-0.5 bg-red-600 text-white text-xs rounded">
-                    {liveMatches.length}
+                {tab.label}
+                {tab.count && (
+                  <span className="ml-2 px-2 py-0.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs rounded-full shadow-lg">
+                    {tab.count}
                   </span>
+                )}
+                {activeTab === tab.key && (
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full" />
                 )}
               </button>
             ))}
@@ -136,86 +173,112 @@ export default function HomePage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-3 py-4">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Left Column - Matches List */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Main Content */}
           <div className="lg:col-span-2 space-y-4">
-            {activeTab === "live" && (
-              <div className="space-y-2">
-                {liveMatches.map((match, idx) => (
-                  <div key={idx}>
-                    {/* League Header */}
-                    <div className="bg-[#252525] px-3 py-2 flex items-center gap-2 text-xs">
-                      <span className="text-gray-400">{match.country}:</span>
-                      <span className="text-white font-semibold">
-                        {match.league}
-                      </span>
-                    </div>
-
-                    {/* Match Row */}
-                    <div className="bg-[#2a2a2a] hover:bg-[#303030] transition-colors cursor-pointer">
-                      <div className="px-3 py-2.5 grid grid-cols-12 gap-2 items-center">
-                        {/* Time/Status */}
-                        <div className="col-span-2 text-center">
-                          <div
-                            className={`text-sm font-bold ${
-                              match.status === "live"
-                                ? "text-[#f4a11d]"
-                                : "text-gray-400"
-                            }`}
-                          >
-                            {match.time}
-                          </div>
+            {activeTab === "overview" && (
+              <>
+                {/* Dashboard Stats Grid */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  {dashboardStats.map((stat, idx) => (
+                    <div key={idx} className="group">
+                      <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-4 border border-white/10 hover:border-cyan-500/50 transition-all hover:shadow-xl hover:shadow-cyan-500/20 hover:-translate-y-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="text-3xl">{stat.icon}</span>
+                          <span className="text-xs font-semibold text-green-400 bg-green-400/10 px-2 py-1 rounded-full">
+                            {stat.change}
+                          </span>
                         </div>
-
-                        {/* Teams */}
-                        <div className="col-span-7 space-y-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-white">
-                              {match.homeTeam}
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm text-white">
-                              {match.awayTeam}
-                            </span>
-                          </div>
+                        <div className="text-2xl font-bold text-white mb-1">
+                          {stat.value}
                         </div>
-
-                        {/* Score */}
-                        <div className="col-span-2 space-y-1">
-                          <div className="text-right">
-                            <span className="text-lg font-bold text-white">
-                              {match.homeScore}
-                            </span>
-                          </div>
-                          <div className="text-right">
-                            <span className="text-lg font-bold text-white">
-                              {match.awayScore}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Arrow */}
-                        <div className="col-span-1 text-right text-gray-500">
-                          <span>›</span>
+                        <div className="text-xs text-gray-400 font-medium">
+                          {stat.label}
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+
+                {/* Live Matches */}
+                <div className="space-y-3">
+                  {liveMatches.map((match, idx) => (
+                    <div key={idx} className="group">
+                      {/* League Header */}
+                      <div className="bg-gradient-to-r from-white/5 to-white/10 backdrop-blur-xl px-4 py-2 flex items-center gap-2 text-xs rounded-t-xl border border-white/10">
+                        <span className="text-gray-400">{match.country}:</span>
+                        <span className="text-white font-bold">
+                          {match.league}
+                        </span>
+                      </div>
+
+                      {/* Match Row */}
+                      <div className="bg-white/5 backdrop-blur-xl hover:bg-white/10 transition-all cursor-pointer rounded-b-xl border-x border-b border-white/10 group-hover:border-cyan-500/30 group-hover:shadow-lg group-hover:shadow-cyan-500/10">
+                        <div className="px-4 py-4 grid grid-cols-12 gap-3 items-center">
+                          {/* Time/Status */}
+                          <div className="col-span-2 text-center">
+                            <div
+                              className={`text-sm font-bold px-3 py-1 rounded-lg ${
+                                match.status === "live"
+                                  ? "bg-gradient-to-r from-pink-500 to-rose-500 text-white animate-pulse"
+                                  : "bg-white/10 text-gray-400"
+                              }`}
+                            >
+                              {match.time}
+                            </div>
+                          </div>
+
+                          {/* Teams */}
+                          <div className="col-span-7 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-white font-medium">
+                                {match.homeTeam}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm text-white font-medium">
+                                {match.awayTeam}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Score */}
+                          <div className="col-span-2 space-y-2">
+                            <div className="text-right">
+                              <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                                {match.homeScore}
+                              </span>
+                            </div>
+                            <div className="text-right">
+                              <span className="text-xl font-bold bg-gradient-to-r from-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                                {match.awayScore}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Arrow */}
+                          <div className="col-span-1 text-right text-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span className="text-xl">›</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
 
             {activeTab === "analytics" && (
-              <div className="bg-[#2a2a2a] rounded-lg p-4">
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-white/10">
                 <AdvancedAnalytics />
               </div>
             )}
 
-            {activeTab === "scheduled" && (
-              <div className="bg-[#2a2a2a] rounded-lg p-6 text-center text-gray-400">
-                <p>Scheduled matches will appear here</p>
+            {activeTab === "predictions" && (
+              <div className="bg-white/5 backdrop-blur-xl rounded-2xl p-8 border border-white/10 text-center">
+                <div className="text-6xl mb-4">🎯</div>
+                <p className="text-gray-400 text-lg">Predictions coming soon</p>
               </div>
             )}
           </div>
@@ -223,48 +286,17 @@ export default function HomePage() {
           {/* Right Column - Sidebar */}
           <div className="space-y-4">
             {/* Live Tracker */}
-            <div className="bg-[#2a2a2a] rounded-lg overflow-hidden">
-              <div className="bg-[#252525] px-3 py-2 border-b border-[#333]">
-                <h3 className="text-sm font-semibold text-white">
-                  LIVE TRACKER
-                </h3>
+            <div className="bg-white/5 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10 hover:border-cyan-500/50 transition-all">
+              <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 px-4 py-3 border-b border-white/10">
+                <h3 className="text-sm font-bold text-white">Live Tracker</h3>
               </div>
-              <div className="p-3">
+              <div className="p-4">
                 <LiveMatchProbabilityTracker />
               </div>
             </div>
 
-            {/* Quick Stats */}
-            <div className="bg-[#2a2a2a] rounded-lg overflow-hidden">
-              <div className="bg-[#252525] px-3 py-2 border-b border-[#333]">
-                <h3 className="text-sm font-semibold text-white">
-                  TODAY'S STATS
-                </h3>
-              </div>
-              <div className="p-3 space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Matches</span>
-                  <span className="text-base font-bold text-[#f4a11d]">
-                    847
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Accuracy</span>
-                  <span className="text-base font-bold text-green-500">
-                    78.5%
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-400">Pi Coins</span>
-                  <span className="text-base font-bold text-yellow-500">
-                    3,420
-                  </span>
-                </div>
-              </div>
-            </div>
-
             {/* Carousel */}
-            <div className="bg-[#2a2a2a] rounded-lg overflow-hidden">
+            <div className="bg-white/5 backdrop-blur-xl rounded-2xl overflow-hidden border border-white/10">
               <HorizontalCarousel />
             </div>
           </div>
