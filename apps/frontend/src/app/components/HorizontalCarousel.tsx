@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 
 interface Card {
@@ -14,22 +13,15 @@ interface Card {
   show: boolean;
 }
 
-// Strategic Horizontal Carousel - Only Critical Features
 export default function HorizontalCarousel() {
   const [liveMatches, setLiveMatches] = useState(0);
   const [todayPredictions, setTodayPredictions] = useState(0);
   const [piBalance, setPiBalance] = useState(0);
   const [userRank, setUserRank] = useState(0);
 
-  // Simulate fetching data (replace with your actual API calls)
   useEffect(() => {
-    // Mock data - Replace with actual API endpoints
     const fetchData = async () => {
       try {
-        // Example: const response = await fetch('/api/dashboard/quick-stats');
-        // const data = await response.json();
-        
-        // Mock values for demonstration - VISIBLE DATA
         setLiveMatches(5);
         setTodayPredictions(18);
         setPiBalance(342.5);
@@ -52,11 +44,10 @@ export default function HorizontalCarousel() {
       bgGradient: "from-red-500/20 to-orange-500/20",
       icon: "🔴",
       action: () => {
-        // Navigate to live matches or scroll to PredictionPreview
         document.getElementById('prediction-preview')?.scrollIntoView({ behavior: 'smooth' });
       },
       priority: 1,
-      show: liveMatches > 0 // Only show if there are live matches
+      show: liveMatches > 0
     },
     {
       id: 'today-predictions',
@@ -67,11 +58,10 @@ export default function HorizontalCarousel() {
       bgGradient: "from-blue-500/20 to-purple-500/20",
       icon: "💡",
       action: () => {
-        // Navigate to predictions section
         document.getElementById('prediction-preview')?.scrollIntoView({ behavior: 'smooth' });
       },
       priority: 2,
-      show: true // Always show
+      show: true
     },
     {
       id: 'pi-balance',
@@ -82,11 +72,10 @@ export default function HorizontalCarousel() {
       bgGradient: "from-yellow-500/20 to-orange-500/20",
       icon: "💰",
       action: () => {
-        // Navigate to Pi wallet
         alert('Opening Pi Wallet...');
       },
       priority: 3,
-      show: true // Always show
+      show: true
     },
     {
       id: 'user-rank',
@@ -97,25 +86,22 @@ export default function HorizontalCarousel() {
       bgGradient: "from-purple-500/20 to-pink-500/20",
       icon: "🏆",
       action: () => {
-        // Navigate to leaderboard
         document.getElementById('prediction-league')?.scrollIntoView({ behavior: 'smooth' });
       },
       priority: 4,
-      show: userRank > 0 // Only show if user has a rank
+      show: userRank > 0
     }
   ];
 
-  // Filter to only show cards that should be displayed
   const visibleCards = criticalCards.filter(card => card.show);
 
-  // Don't render if no cards to show
   if (visibleCards.length === 0) {
     return null;
   }
 
   return (
     <div className="w-full mb-8 relative z-10">
-      {/* Minimal Section Header */}
+      {/* Section Header */}
       <div className="flex items-center justify-between mb-4 px-2">
         <h3 className="text-xl font-bold text-white flex items-center gap-2">
           <span className="text-green-400">⚡</span>
@@ -126,21 +112,16 @@ export default function HorizontalCarousel() {
         )}
       </div>
 
-      {/* Horizontal Scrolling Container */}
-      <div className="relative -mx-4 px-4">
+      {/* Fixed Horizontal Scrolling Container */}
+      <div className="relative w-full">
         <div 
-          className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory"
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-            scrollPaddingLeft: '1rem'
-          }}
+          className="carousel-scroll flex gap-4 overflow-x-auto pb-4 px-4 snap-x snap-mandatory"
         >
           {visibleCards.map((card, index) => (
             <button
               key={card.id}
               onClick={card.action}
-              className="min-w-[170px] flex-shrink-0 snap-start focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-2xl transition-all duration-300"
+              className="carousel-item min-w-[170px] flex-shrink-0 snap-start focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-2xl transition-all duration-300"
               style={{ 
                 animationDelay: `${index * 50}ms`,
                 animation: 'slideInUp 0.5s ease-out forwards',
@@ -152,7 +133,7 @@ export default function HorizontalCarousel() {
               <div className="backdrop-blur-lg bg-white/10 border border-white/20 p-5 rounded-2xl hover:scale-105 hover:bg-white/15 hover:border-white/40 group cursor-pointer h-full relative overflow-hidden transition-all duration-300 shadow-2xl hover:shadow-green-500/20">
                 {/* Gradient Background Effect */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-40 group-hover:opacity-60 transition-opacity duration-300`}></div>
-                
+
                 {/* Content */}
                 <div className="relative z-10 flex flex-col h-full">
                   {/* Icon & Status Indicator */}
@@ -179,14 +160,14 @@ export default function HorizontalCarousel() {
                   </div>
                 </div>
 
-                {/* Subtle Shine Effect on Hover */}
+                {/* Shine Effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
               </div>
             </button>
           ))}
         </div>
 
-        {/* Fade Edges Effect - Only if multiple cards */}
+        {/* Fade Edges Effect */}
         {visibleCards.length > 2 && (
           <>
             <div className="absolute left-0 top-0 bottom-4 w-8 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent pointer-events-none z-10"></div>
@@ -207,9 +188,24 @@ export default function HorizontalCarousel() {
           }
         }
 
-        /* Hide scrollbar for webkit browsers */
-        .overflow-x-auto::-webkit-scrollbar {
+        /* Critical fix for smooth scrolling */
+        .carousel-scroll {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+          -webkit-overflow-scrolling: touch;
+          scroll-behavior: smooth;
+          overscroll-behavior-x: contain;
+          touch-action: pan-x pinch-zoom;
+        }
+
+        .carousel-scroll::-webkit-scrollbar {
           display: none;
+        }
+
+        /* Ensure items snap properly */
+        .carousel-item {
+          scroll-snap-align: start;
+          scroll-snap-stop: normal;
         }
       `}</style>
     </div>
