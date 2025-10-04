@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 interface Card {
   id: string;
@@ -27,7 +27,7 @@ export default function HorizontalCarousel() {
         setPiBalance(342.5);
         setUserRank(89);
       } catch (error) {
-        console.error('Error fetching carousel data:', error);
+        console.error("Error fetching carousel data:", error);
       }
     };
 
@@ -36,7 +36,7 @@ export default function HorizontalCarousel() {
 
   const criticalCards: Card[] = [
     {
-      id: 'live-matches',
+      id: "live-matches",
       title: "Live Matches",
       subtitle: `${liveMatches} ongoing`,
       value: "⚽ LIVE",
@@ -44,13 +44,15 @@ export default function HorizontalCarousel() {
       bgGradient: "from-red-500/20 to-orange-500/20",
       icon: "🔴",
       action: () => {
-        document.getElementById('prediction-preview')?.scrollIntoView({ behavior: 'smooth' });
+        document
+          .getElementById("prediction-preview")
+          ?.scrollIntoView({ behavior: "smooth" });
       },
       priority: 1,
-      show: liveMatches > 0
+      show: liveMatches > 0,
     },
     {
-      id: 'today-predictions',
+      id: "today-predictions",
       title: "Today's Tips",
       subtitle: "Premier League",
       value: `${todayPredictions}`,
@@ -58,13 +60,15 @@ export default function HorizontalCarousel() {
       bgGradient: "from-blue-500/20 to-purple-500/20",
       icon: "💡",
       action: () => {
-        document.getElementById('prediction-preview')?.scrollIntoView({ behavior: 'smooth' });
+        document
+          .getElementById("prediction-preview")
+          ?.scrollIntoView({ behavior: "smooth" });
       },
       priority: 2,
-      show: true
+      show: true,
     },
     {
-      id: 'pi-balance',
+      id: "pi-balance",
       title: "Pi Balance",
       subtitle: "Available",
       value: `${piBalance.toFixed(1)}π`,
@@ -72,13 +76,13 @@ export default function HorizontalCarousel() {
       bgGradient: "from-yellow-500/20 to-orange-500/20",
       icon: "💰",
       action: () => {
-        alert('Opening Pi Wallet...');
+        alert("Opening Pi Wallet...");
       },
       priority: 3,
-      show: true
+      show: true,
     },
     {
-      id: 'user-rank',
+      id: "user-rank",
       title: "Your Rank",
       subtitle: "Global leaderboard",
       value: `#${userRank}`,
@@ -86,14 +90,16 @@ export default function HorizontalCarousel() {
       bgGradient: "from-purple-500/20 to-pink-500/20",
       icon: "🏆",
       action: () => {
-        document.getElementById('prediction-league')?.scrollIntoView({ behavior: 'smooth' });
+        document
+          .getElementById("prediction-league")
+          ?.scrollIntoView({ behavior: "smooth" });
       },
       priority: 4,
-      show: userRank > 0
-    }
+      show: userRank > 0,
+    },
   ];
 
-  const visibleCards = criticalCards.filter(card => card.show);
+  const visibleCards = criticalCards.filter((card) => card.show);
 
   if (visibleCards.length === 0) {
     return null;
@@ -108,38 +114,40 @@ export default function HorizontalCarousel() {
           Quick Actions
         </h3>
         {visibleCards.length > 2 && (
-          <span className="text-xs text-gray-400 bg-gray-800/50 px-2 py-1 rounded-full">Swipe →</span>
+          <span className="text-xs text-gray-400 bg-gray-800/50 px-2 py-1 rounded-full">
+            Swipe →
+          </span>
         )}
       </div>
 
       {/* Fixed Horizontal Scrolling Container */}
       <div className="relative w-full">
-        <div 
-          className="carousel-scroll flex gap-4 overflow-x-auto pb-4 px-4 snap-x snap-mandatory"
-        >
+        <div className="carousel-scroll flex gap-4 overflow-x-auto pb-4 px-4 snap-x snap-mandatory">
           {visibleCards.map((card, index) => (
             <button
               key={card.id}
               onClick={card.action}
               className="carousel-item min-w-[170px] flex-shrink-0 snap-start focus:outline-none focus:ring-2 focus:ring-blue-500/50 rounded-2xl transition-all duration-300"
-              style={{ 
+              style={{
                 animationDelay: `${index * 50}ms`,
-                animation: 'slideInUp 0.5s ease-out forwards',
-                opacity: 0
+                animation: "slideInUp 0.5s ease-out forwards",
+                opacity: 0,
               }}
               aria-label={`${card.title}: ${card.value}`}
             >
               {/* Glass Card with Gradient */}
               <div className="backdrop-blur-lg bg-white/10 border border-white/20 p-5 rounded-2xl hover:scale-105 hover:bg-white/15 hover:border-white/40 group cursor-pointer h-full relative overflow-hidden transition-all duration-300 shadow-2xl hover:shadow-green-500/20">
                 {/* Gradient Background Effect */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-40 group-hover:opacity-60 transition-opacity duration-300`}></div>
+                <div
+                  className={`absolute inset-0 bg-gradient-to-br ${card.bgGradient} opacity-40 group-hover:opacity-60 transition-opacity duration-300`}
+                ></div>
 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col h-full">
                   {/* Icon & Status Indicator */}
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-2xl">{card.icon}</span>
-                    {card.id === 'live-matches' && (
+                    {card.id === "live-matches" && (
                       <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-lg shadow-red-500/50"></div>
                     )}
                   </div>
@@ -155,7 +163,9 @@ export default function HorizontalCarousel() {
                   </div>
 
                   {/* Value */}
-                  <div className={`text-xl font-bold bg-gradient-to-r ${card.gradient} bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300`}>
+                  <div
+                    className={`text-xl font-bold bg-gradient-to-r ${card.gradient} bg-clip-text text-transparent group-hover:scale-105 transition-transform duration-300`}
+                  >
                     {card.value}
                   </div>
                 </div>
