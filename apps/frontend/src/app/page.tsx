@@ -41,6 +41,16 @@ export default function HomePage() {
     { id: 'cricket', name: 'Cricket', icon: '🏏' },
   ];
 
+  const [activeFilter, setActiveFilter] = useState<'all' | 'live' | 'odds' | 'finished' | 'scheduled'>('all');
+
+  const matchFilters = [
+    { id: 'all', label: 'ALL', count: 12 },
+    { id: 'live', label: 'LIVE', count: 3 },
+    { id: 'odds', label: 'ODDS', count: 8 },
+    { id: 'finished', label: 'FINISHED', count: 5 },
+    { id: 'scheduled', label: 'SCHEDULED', count: 4 },
+  ];
+
   const dashboardStats = [
     { label: 'Active Users', value: '2,341', change: '+12.5%', icon: '👥', color: 'from-blue-500 to-blue-600' },
     { label: 'Predictions Today', value: '847', change: '+8.3%', icon: '🎯', color: 'from-purple-500 to-purple-600', link: '/predictions' },
@@ -48,6 +58,13 @@ export default function HomePage() {
     { label: 'Pi Coins Earned', value: '3,420', change: '+420', icon: '💰', color: 'from-yellow-500 to-yellow-600' },
   ];
 
+  const pinnedLeagues = [
+    { name: 'Premier League', country: 'England', flag: '🏴󐁧󐁢󐁥󐁮󐁧󐁿', active: 3 },
+    { name: 'La Liga', country: 'Spain', flag: '🇪🇸', active: 2 },
+    { name: 'Serie A', country: 'Italy', flag: '🇮🇹', active: 1 },
+    { name: 'Bundesliga', country: 'Germany', flag: '🇩🇪', active: 2 },
+    { name: 'Ligue 1', country: 'France', flag: '🇫🇷', active: 0 },
+  ];
   const liveMatches = [
     { 
       league: 'Premier League', 
