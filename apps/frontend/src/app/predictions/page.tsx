@@ -15,11 +15,19 @@ export default function PredictionsPage() {
   const [predictions, setPredictions] = useState<Prediction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"optimized" | "standard">(
-    () => (localStorage.getItem("viewMode") as "optimized" | "standard") || "optimized"
-  );
+  const [viewMode, setViewMode] = useState<"optimized" | "standard">("optimized");
+  const [isMounted, setIsMounted] = useState(false);
 
-  const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+  // Load viewMode from localStorage after component mounts
+  useEffect(() => {
+    setIsMounted(true);
+    const savedViewMode = localStorage.getItem("viewMode") as "optimized" | "standard";
+    if (savedViewMode) {
+      setViewMode(savedViewMode);
+    }
+  }, []);
+
+  const isMobile = typeof window !== 'undefined' && /Mobi|Android/i.test(navigator.userAgent);
   const refreshInterval = isMobile ? 30000 : 60000;
 
   const fetchPredictions = async () => {
@@ -29,25 +37,41 @@ export default function PredictionsPage() {
       const res = await fetch("/api/predictions");
       if (!res.ok) throw new Error("Failed to fetch predictions");
       const data = await res.json();
-      setPredictions(data);
+      
+      // Ensure data is an array
+      if (Array.isArray(data)) {
+        setPredictions(data);
+      } else {
+        console.error("API did not return an array:", data);
+        setPredictions([]);
+      }
     } catch (err: any) {
       setError(err.message);
+      setPredictions([]); // Reset to empty array on error
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchPredictions();
-    const interval = setInterval(fetchPredictions, refreshInterval);
-    return () => clearInterval(interval);
-  }, []);
+    if (isMounted) {
+      fetchPredictions();
+      const interval = setInterval(fetchPredictions, refreshInterval);
+      return () => clearInterval(interval);
+    }
+  }, [isMounted, refreshInterval]);
 
   const toggleView = () => {
     const next = viewMode === "optimized" ? "standard" : "optimized";
     setViewMode(next);
-    localStorage.setItem("viewMode", next);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("viewMode", next);
+    }
   };
+
+  if (!isMounted) {
+    return null; // or a loading skeleton
+  }
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
