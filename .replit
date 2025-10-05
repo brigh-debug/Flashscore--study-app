@@ -3,7 +3,7 @@ run = "cd apps/frontend && npm run dev"
 
 [nix]
 channel = "stable-25_05"
-packages = ["miktex", "nix-output-monitor"]
+packages = ["miktex", "nix-output-monitor", "psmisc"]
 
 [deployment]
 run = ["sh", "-c", "cd apps/backend && npm start & cd apps/frontend && npm start"]
@@ -110,6 +110,10 @@ exposeLocalhost = true
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3002
 
 [[ports]]
 localPort = 8000
