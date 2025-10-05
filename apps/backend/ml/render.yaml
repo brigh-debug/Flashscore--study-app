@@ -1,0 +1,22 @@
+# =======================================
+# Render Deployment Configuration
+# MagajiCo ML Prediction API
+# =======================================
+
+services:
+  - type: web
+    name: magajico-api
+    env: docker
+    plan: free
+    autoDeploy: true
+
+    # Optional: If your Dockerfile is in a subfolder, specify:
+    # dockerContext: ./backend
+
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: ENVIRONMENT
+        value: production
+      - key: PORT
+        value: 10000
