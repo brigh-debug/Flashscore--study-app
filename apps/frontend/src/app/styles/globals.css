@@ -1,3 +1,6 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /* === ENHANCED iOS 17 DESIGN SYSTEM === */
 :root {
   /* Enhanced iOS 17 Color Palette */
