@@ -14,7 +14,7 @@ Sports Central is a premium monorepo sports prediction and community platform bu
 ```
 magajico-monorepo/
 ├── apps/
-│   ├── frontend/          # Next.js 14 app (Port 5001)
+│   ├── frontend/          # Next.js 14 app (Port 5000)
 │   ├── backend/           # Fastify API (Port 3001)
 │   │   └── ml/            # FastAPI ML service (Port 8000)
 └── packages/
@@ -24,8 +24,8 @@ magajico-monorepo/
 ## Replit Configuration
 
 ### Workflows
-- **Frontend** (Port 5001): `cd apps/frontend && pnpm dev`
-  - Serves the Next.js application on 0.0.0.0:5001
+- **Frontend** (Port 5000): `cd apps/frontend && pnpm dev`
+  - Serves the Next.js application on 0.0.0.0:5000
   - Configured with allowedDevOrigins for Replit proxy
   - WebView output type for browser preview
 
@@ -41,12 +41,12 @@ Environment variables can be configured through Replit's Secrets panel.
 Configured for **autoscale** deployment:
 - Build: `pnpm install && cd apps/frontend && pnpm build`
 - Run: `cd apps/frontend && pnpm start`
-- Production port: 5001
+- Production port: 5000
 
 ## Development
 
 ### Running the App
-The frontend workflow is already configured and runs automatically on port 5001.
+The frontend workflow is already configured and runs automatically on port 5000.
 
 ### Installing Dependencies
 ```bash
@@ -69,7 +69,7 @@ cd apps/backend/ml && python main.py
 ```
 
 ## Port Configuration
-- **Frontend (Next.js)**: Port 5001 (0.0.0.0)
+- **Frontend (Next.js)**: Port 5000 (0.0.0.0)
 - **Backend (Fastify)**: Port 3001 (localhost)
 - **ML Service (FastAPI)**: Port 8000 (0.0.0.0)
 
@@ -78,7 +78,7 @@ cd apps/backend/ml && python main.py
   - Installed Node.js 20 and Python 3.11 modules
   - Configured Next.js to allow Replit dev origins
   - Updated all port 3000 references to 3001 for backend
-  - Set up Frontend workflow on port 5001
+  - Set up Frontend workflow on port 5000
   - Configured autoscale deployment
   - Added .gitignore patterns for Node.js and Python
 
@@ -86,4 +86,4 @@ cd apps/backend/ml && python main.py
 - The app gracefully handles missing MongoDB connection
 - Service Worker is registered for PWA functionality
 - Cross-origin requests are configured for Replit's iframe proxy
-- The frontend uses 0.0.0.0:5001 to work with Replit's preview system
+- The frontend uses 0.0.0.0:5000 to work with Replit's preview system
