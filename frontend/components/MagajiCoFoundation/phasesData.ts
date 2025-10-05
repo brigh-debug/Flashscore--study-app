@@ -1,5 +1,3 @@
-import { Phase } from "./index"; // optional if types are exported separately
-
 const buildingPhases = [
   {
     id: "foundation",
@@ -17,7 +15,7 @@ const buildingPhases = [
   {
     id: "structure",
     name: "Structural Stage",
-    description: "Building strong pillars of consistency and leadership.",
+    description: "Building the pillars of leadership and strength.",
     requiredPower: 15,
     unlocked: false,
     building: false,
@@ -30,20 +28,20 @@ const buildingPhases = [
   {
     id: "finishing",
     name: "Finishing Touch",
-    description: "Refining excellence for global impact.",
+    description: "Refining excellence for visibility and influence.",
     requiredPower: 30,
     unlocked: false,
     building: false,
     completed: false,
     components: [
-      { name: "Brand Refinement", type: "crypto", powerBoost: 15, installed: false },
-      { name: "Strategic Visibility", type: "ai", powerBoost: 20, installed: false },
+      { name: "Brand Polish", type: "crypto", powerBoost: 15, installed: false },
+      { name: "Strategic Reach", type: "ai", powerBoost: 20, installed: false },
     ],
   },
   {
     id: "rooftop",
     name: "Legendary Rooftop",
-    description: "Your empire shines across all domains.",
+    description: "Your empire now shines across generations.",
     requiredPower: 60,
     unlocked: false,
     building: false,
