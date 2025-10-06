@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://0.0.0.0:3001';
 
 // Retry logic for failed requests
 async function fetchWithRetry(url: string, options?: RequestInit, retries = 3): Promise<Response> {
@@ -53,7 +53,7 @@ export const foundationApi = {
   // Get user's foundation progress
   async getProgress(userId: string): Promise<FoundationData> {
     const response = await fetchWithRetry(`${API_URL}/api/foundation/${userId}`);
-    const result: ApiResponse<FoundationData> = await response.json();
+    const result = await response.json() as ApiResponse<FoundationData>;
     
     if (!result.success || !result.data) {
       throw new Error(result.error || 'Failed to fetch foundation progress');
@@ -72,7 +72,7 @@ export const foundationApi = {
       body: JSON.stringify({ phaseId }),
     });
     
-    const result: ApiResponse<FoundationData> = await response.json();
+    const result = await response.json() as ApiResponse<FoundationData>;
     
     if (!result.success || !result.data) {
       throw new Error(result.error || 'Failed to start building phase');
@@ -91,7 +91,7 @@ export const foundationApi = {
       body: JSON.stringify({ phaseId }),
     });
     
-    const result: ApiResponse<FoundationData> = await response.json();
+    const result = await response.json() as ApiResponse<FoundationData>;
     
     if (!result.success || !result.data) {
       throw new Error(result.error || 'Failed to complete phase');
@@ -109,7 +109,7 @@ export const foundationApi = {
       method: 'POST',
     });
     
-    const result: ApiResponse<FoundationData> = await response.json();
+    const result = await response.json() as ApiResponse<FoundationData>;
     
     if (!result.success || !result.data) {
       throw new Error(result.error || 'Failed to reset foundation');
@@ -127,7 +127,7 @@ export const foundationApi = {
     totalPhases: number;
   }>> {
     const response = await fetch(`${API_URL}/api/foundation/leaderboard`);
-    const result: ApiResponse<any[]> = await response.json();
+    const result = await response.json() as ApiResponse<any[]>;
     
     if (!result.success || !result.data) {
       throw new Error(result.error || 'Failed to fetch leaderboard');
