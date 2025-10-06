@@ -1,7 +1,6 @@
-// Client-side storage utilities
-export class ClientStorage {
+
+export class SafeStorage {
   private static isAvailable(): boolean {
-    if (typeof window === 'undefined') return false;
     try {
       const test = '__storage_test__';
       localStorage.setItem(test, test);
@@ -13,39 +12,46 @@ export class ClientStorage {
   }
 
   static getItem<T>(key: string, defaultValue: T): T {
-    if (!this.isAvailable()) {
-      return defaultValue;
-    }
-
+    if (!this.isAvailable()) return defaultValue;
+    
     try {
       const item = localStorage.getItem(key);
-      if (!item) {
-        return defaultValue;
-      }
-      const parsed = JSON.parse(item);
-      // Return default if parsed is null or undefined
-      return parsed ?? defaultValue;
+      return item ? JSON.parse(item) : defaultValue;
     } catch (e) {
       console.warn(`Failed to read ${key} from storage:`, e);
       return defaultValue;
     }
   }
 
-  static setItem(key: string, value: any): void {
-    if (typeof window !== 'undefined') {
+  static setItem<T>(key: string, value: T): boolean {
+    if (!this.isAvailable()) return false;
+    
+    try {
       localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (e) {
+      console.warn(`Failed to write ${key} to storage:`, e);
+      return false;
     }
   }
 
   static removeItem(key: string): void {
-    if (typeof window !== 'undefined') {
+    if (!this.isAvailable()) return;
+    
+    try {
       localStorage.removeItem(key);
+    } catch (e) {
+      console.warn(`Failed to remove ${key} from storage:`, e);
     }
   }
 
   static clear(): void {
-    if (typeof window !== 'undefined') {
+    if (!this.isAvailable()) return;
+    
+    try {
       localStorage.clear();
+    } catch (e) {
+      console.warn('Failed to clear storage:', e);
     }
   }
 }

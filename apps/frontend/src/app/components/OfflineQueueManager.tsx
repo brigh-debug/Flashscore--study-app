@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -19,7 +18,7 @@ const OfflineQueueManager: React.FC = () => {
 
   useEffect(() => {
     const savedQueue = ClientStorage.getItem('offline_queue', []);
-    setQueue(savedQueue);
+    setQueue(Array.isArray(savedQueue) ? savedQueue : []);
 
     const handleOnline = () => {
       setIsOnline(true);
@@ -38,7 +37,8 @@ const OfflineQueueManager: React.FC = () => {
   }, []);
 
   const syncQueue = async () => {
-    if (queue.length === 0 || syncing) return;
+    const queueLength = queue?.length ?? 0;
+    if (queueLength === 0 || syncing) return;
 
     setSyncing(true);
     const remainingQueue: QueuedAction[] = [];
@@ -81,7 +81,7 @@ const OfflineQueueManager: React.FC = () => {
     return endpoints[type] || '/api/actions';
   };
 
-  if (queue.length === 0) return null;
+  if (!queue || !Array.isArray(queue) || queue.length === 0) return null;
 
   return (
     <div className="fixed bottom-20 left-4 right-4 md:left-auto md:right-4 md:w-80 z-50">
@@ -93,7 +93,7 @@ const OfflineQueueManager: React.FC = () => {
           </div>
           <span className="text-gray-300 text-sm">{queue.length} items</span>
         </div>
-        
+
         <p className="text-gray-400 text-sm mb-3">
           {isOnline
             ? syncing

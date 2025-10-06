@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useState, useEffect } from 'react';
 import { ClientStorage } from '../utils/clientStorage';
@@ -73,28 +72,32 @@ const CrossPlatformSync: React.FC = () => {
 
   useEffect(() => {
     loadSyncSettings();
-    
+
     if (syncSettings.autoSync) {
       const interval = setInterval(() => {
         syncAllDevices();
       }, syncSettings.syncInterval * 60 * 1000);
-      
+
       return () => clearInterval(interval);
     }
   }, [syncSettings.autoSync, syncSettings.syncInterval]);
 
   const loadSyncSettings = () => {
-    const saved = ClientStorage.getItem('cross_platform_sync', {
-      devices: [],
-      settings: syncSettings
-    });
-    
-    if (saved.settings) {
-      setSyncSettings(saved.settings);
-    }
-    
-    if (saved.devices && saved.devices.length > 0) {
-      setDevices(saved.devices);
+    try {
+      const saved = ClientStorage.getItem('cross_platform_sync', {
+        settings: syncSettings,
+        devices: devices
+      });
+
+      if (saved && saved.settings) {
+        setSyncSettings(saved.settings);
+      }
+
+      if (saved && saved.devices && Array.isArray(saved.devices) && saved.devices.length > 0) {
+        setDevices(saved.devices);
+      }
+    } catch (e) {
+      console.warn('Failed to load sync settings:', e);
     }
   };
 
@@ -128,28 +131,28 @@ const CrossPlatformSync: React.FC = () => {
     }
 
     // Update device status
-    setDevices(devices.map(d => 
-      d.id === deviceId 
+    setDevices(devices.map(d =>
+      d.id === deviceId
         ? { ...d, status: 'syncing' as const }
         : d
     ));
 
     // Simulate connection
     setTimeout(() => {
-      setDevices(devices.map(d => 
-        d.id === deviceId 
+      setDevices(devices.map(d =>
+        d.id === deviceId
           ? { ...d, status: 'connected' as const, lastSync: new Date() }
           : d
       ));
-      
+
       saveSyncSettings();
       syncDevice(deviceId);
     }, 1500);
   };
 
   const disconnectDevice = (deviceId: string) => {
-    setDevices(devices.map(d => 
-      d.id === deviceId 
+    setDevices(devices.map(d =>
+      d.id === deviceId
         ? { ...d, status: 'disconnected' as const }
         : d
     ));
@@ -187,12 +190,12 @@ const CrossPlatformSync: React.FC = () => {
         break;
     }
 
-    setDevices(devices.map(d => 
-      d.id === deviceId 
+    setDevices(devices.map(d =>
+      d.id === deviceId
         ? { ...d, lastSync: new Date() }
         : d
     ));
-    
+
     setLastSyncTime(new Date());
   };
 
@@ -205,10 +208,10 @@ const CrossPlatformSync: React.FC = () => {
   const syncBrowserExtension = async (data: SyncData) => {
     // Use localStorage for browser extension sync
     localStorage.setItem('magajico_sync_data', JSON.stringify(data));
-    
+
     // Trigger custom event for extension
     window.dispatchEvent(new CustomEvent('magajico-sync', { detail: data }));
-    
+
     console.log('🌐 Browser extension synced');
   };
 
@@ -428,7 +431,7 @@ const CrossPlatformSync: React.FC = () => {
                     />
                   </div>
                 )}
-                
+
                 {device.type === 'discord' && (
                   <input
                     type="text"
@@ -446,7 +449,7 @@ const CrossPlatformSync: React.FC = () => {
                     }}
                   />
                 )}
-                
+
                 {device.type === 'telegram' && (
                   <input
                     type="text"
@@ -464,7 +467,7 @@ const CrossPlatformSync: React.FC = () => {
                     }}
                   />
                 )}
-                
+
                 {device.type === 'email' && (
                   <input
                     type="email"
@@ -554,7 +557,7 @@ const CrossPlatformSync: React.FC = () => {
         padding: '20px'
       }}>
         <h3 style={{ color: '#fff', marginBottom: '16px' }}>⚙️ Sync Settings</h3>
-        
+
         <div style={{ display: 'grid', gap: '12px' }}>
           <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ color: '#d1d5db' }}>Auto-sync enabled</span>
@@ -565,7 +568,7 @@ const CrossPlatformSync: React.FC = () => {
               style={{ width: '20px', height: '20px', cursor: 'pointer' }}
             />
           </label>
-          
+
           <label style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ color: '#d1d5db' }}>Sync interval (minutes)</span>
             <select
