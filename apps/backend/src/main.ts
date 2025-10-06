@@ -8,17 +8,18 @@ import { connectDB } from "./config/db";
 // Existing routes
 import { healthRoutes } from "./routes/health";
 import { foundationRoutes } from "./routes/foundation";
-// import { matchRoutes } from "./routes/matches";
-// import { predictionRoutes } from "./routes/predictions";
-// import { scraperRoutes } from "./routes/scraper";
-// import { mlRoutes } from "./routes/ml";
-// import { newsAuthorRoutes } from "./routes/newsAuthors";
-// import { newsAuthorRoutes as newsRoutes } from "./routes/news";
+import newsAuthorsRoutes from "./routes/newsAuthors";
+import { mlRoutes } from "./routes/ml";
+// import matchRoutes from "./routes/matches";
+// import predictionRoutes from "./routes/predictions";
+// import scraperRoutes from "./routes/scraper";
+// import newsRoutes from "./routes/news";
 
 // Enhanced MagajiCo routes
-// import { enhancedPredictionRoutes } from "./routes/enhanced-predictions";
+import { enhancedPredictionRoutes } from "./routes/enhanced-predictions";
 // import { ceoAnalysisRoutes } from "./routes/ceo-analysis"; // Route file missing
-// import { marketIntelligenceRoutes } from "./routes/market-intelligence";
+import { marketIntelligenceRoutes } from "./routes/market-intelligence";
+import { confidenceEvolutionRoutes } from "./routes/confidence-evolution";
 
 const server = Fastify({
   logger: {
@@ -51,12 +52,12 @@ server.register(rateLimit, {
 const normalizeOrigin = (url: string): string => {
   // Trim whitespace
   let normalized = url.trim();
-  
+
   // Remove trailing slash
   if (normalized.endsWith('/')) {
     normalized = normalized.slice(0, -1);
   }
-  
+
   return normalized;
 };
 
@@ -81,8 +82,8 @@ const buildAllowedOrigins = (): string[] => {
   if (process.env.REPLIT_DEV_DOMAIN) {
     const replitDomain = process.env.REPLIT_DEV_DOMAIN.trim();
     // Check if it already has a scheme
-    const replitUrl = replitDomain.startsWith('http') 
-      ? replitDomain 
+    const replitUrl = replitDomain.startsWith('http')
+      ? replitDomain
       : `https://${replitDomain}`;
     origins.push(normalizeOrigin(replitUrl));
   }
@@ -106,20 +107,20 @@ server.register(cors, {
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    
+
     // Normalize the incoming origin for comparison
     const normalizedOrigin = normalizeOrigin(origin);
-    
+
     // Check if origin is in allowed list
     if (allowedOrigins.includes(normalizedOrigin)) {
       return callback(null, true);
     }
-    
+
     // Allow all origins in development mode
     if (process.env.NODE_ENV === 'development') {
       return callback(null, true);
     }
-    
+
     // Reject in production
     server.log.warn({ origin, normalizedOrigin, allowedOrigins }, 'CORS request rejected');
     return callback(new Error('Not allowed by CORS'), false);
@@ -183,18 +184,18 @@ server.setNotFoundHandler((request, reply) => {
 // Register existing routes
 server.register(healthRoutes, { prefix: "/api" });
 server.register(foundationRoutes, { prefix: "/api" });
-// Database-dependent routes commented out until DB is configured
+server.register(newsAuthorsRoutes, { prefix: "/api" });
+server.register(mlRoutes, { prefix: "/api/ml" });
 // server.register(matchRoutes, { prefix: "/api" });
 // server.register(predictionRoutes, { prefix: "/api" });
 // server.register(scraperRoutes, { prefix: "/api" });
-// server.register(mlRoutes, { prefix: "/api/ml" });
-// server.register(newsAuthorRoutes, { prefix: "/api" });
 // server.register(newsRoutes, { prefix: "/api" });
 
 // Register enhanced MagajiCo routes
 // server.register(enhancedPredictionRoutes, { prefix: "/api/v2/predictions" });
 // server.register(ceoAnalysisRoutes, { prefix: "/api/v2/ceo" }); // Route file missing
 // server.register(marketIntelligenceRoutes, { prefix: "/api/v2/market" });
+server.register(confidenceEvolutionRoutes, { prefix: "/api/confidence-evolution" });
 
 // Root endpoint
 server.get('/', async (request, reply) => {
@@ -246,7 +247,7 @@ const start = async () => {
     server.log.info('✅ Database connected successfully');
 
     const port = Number(process.env.PORT) || 3001;
-    const host = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+    const host = '0.0.0.0';
 
     await server.listen({
       port,

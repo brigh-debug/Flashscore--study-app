@@ -6,11 +6,13 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: false,
   },
-  allowedDevOrigins: ['*.replit.dev'],
   experimental: {
     serverActions: {
       allowedOrigins: ['*'],
     },
+  },
+  devIndicators: {
+    buildActivityPosition: 'bottom-right',
   },
   async headers() {
     return [

@@ -10,6 +10,11 @@ import SmartLoadingState from "./components/SmartLoadingState";
 import SmartErrorRecovery from "./components/SmartErrorRecovery";
 import OfflineQueueManager from "./components/OfflineQueueManager";
 import AuthorsLeaderboard from "./components/AuthorsLeaderboard";
+import MagajiCoManager from "./components/MagajiCoManager";
+import PredictionPreview from "./components/PredictionPreview";
+import PredictiveConfidenceEvolution from "./components/PredictiveConfidenceEvolution";
+import AICoachAssistant from "./components/AICoachAssistant";
+import PredictiveAlertSystem from "./components/PredictiveAlertSystem";
 
 export default function HomePage() {
   const [activeSection, setActiveSection] = useState('home');
@@ -55,6 +60,7 @@ export default function HomePage() {
           <div style={{ padding: sidebarOpen ? '20px' : '10px' }}>
             {[
               { id: 'home', icon: '🏠', label: 'Home' },
+              { id: 'empire', icon: '🏗️', label: 'Empire Builder' },
               { id: 'predictions', icon: '📊', label: 'Predictions' },
               { id: 'authors', icon: '✍️', label: 'Authors' },
               { id: 'social', icon: '💬', label: 'Social' },
@@ -69,10 +75,10 @@ export default function HomePage() {
                   width: '100%',
                   padding: sidebarOpen ? '15px 20px' : '12px 10px',
                   marginBottom: '10px',
-                  background: activeSection === item.id 
+                  background: activeSection === item.id
                     ? 'linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 162, 255, 0.2))'
                     : 'rgba(255, 255, 255, 0.03)',
-                  border: activeSection === item.id 
+                  border: activeSection === item.id
                     ? '1px solid rgba(0, 255, 136, 0.3)'
                     : '1px solid rgba(255, 255, 255, 0.05)',
                   borderRadius: '12px',
@@ -107,7 +113,69 @@ export default function HomePage() {
               <Suspense fallback={<SmartLoadingState type="dashboard" />}>
                 <ComprehensiveSportsHub />
               </Suspense>
+              <Suspense fallback={<SmartLoadingState type="card" />}>
+                <PredictiveConfidenceEvolution />
+              </Suspense>
             </>
+          )}
+
+          {activeSection === 'empire' && (
+            <Suspense fallback={<SmartLoadingState type="card" count={2} />}>
+              <div style={{ display: 'grid', gap: '20px' }}>
+                <div style={{
+                  background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 140, 0, 0.1))',
+                  borderRadius: '20px',
+                  padding: '30px',
+                  border: '1px solid rgba(255, 215, 0, 0.3)'
+                }}>
+                  <h1 style={{
+                    fontSize: '2.5rem',
+                    fontWeight: 'bold',
+                    background: 'linear-gradient(to right, #ffd700, #ff8c00)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    marginBottom: '20px'
+                  }}>
+                    🏗️ MagajiCo Empire Builder
+                  </h1>
+                  <p style={{ color: '#ccc', marginBottom: '20px' }}>
+                    Build your empire from foundation to legendary rooftop. Chat with MagajiCo AI CEO for strategic predictions and insights.
+                  </p>
+                  <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+                    <a
+                      href="/empire/MagajiCoFoundation"
+                      style={{
+                        padding: '12px 24px',
+                        background: 'linear-gradient(135deg, #ffd700, #ff8c00)',
+                        color: '#000',
+                        borderRadius: '10px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        display: 'inline-block'
+                      }}
+                    >
+                      Start Building
+                    </a>
+                    <a
+                      href="/empire/growth"
+                      style={{
+                        padding: '12px 24px',
+                        background: 'rgba(255, 255, 255, 0.1)',
+                        color: '#fff',
+                        border: '1px solid rgba(255, 215, 0, 0.5)',
+                        borderRadius: '10px',
+                        fontWeight: '600',
+                        textDecoration: 'none',
+                        display: 'inline-block'
+                      }}
+                    >
+                      View Growth
+                    </a>
+                  </div>
+                </div>
+                <MagajiCoManager isOpen={true} />
+              </div>
+            </Suspense>
           )}
 
           {activeSection === 'predictions' && (
@@ -149,6 +217,10 @@ export default function HomePage() {
           )}
 
           <OfflineQueueManager />
+          
+          {/* Floating AI Features - Available on all sections */}
+          <AICoachAssistant />
+          <PredictiveAlertSystem />
         </div>
       </div>
     </SmartErrorRecovery>
