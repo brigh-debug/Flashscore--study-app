@@ -1,11 +1,11 @@
+
+import React from 'react';
+import { KidsModeProvider } from "../context/KidsModeContext";
 import "./styles/globals.css";
 import type { Metadata } from "next";
 import PWAServiceWorker from "./components/PWAServiceWorker";
 import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import MobilePerformanceOptimizer from './components/MobilePerformanceOptimizer'; // Assuming this component exists
-
-// Assume 'inter' font is defined elsewhere or will be imported
-// For example: import { Inter } from 'next/font/google'; const inter = Inter({ subsets: ['latin'] });
+import MobilePerformanceOptimizer from './components/MobilePerformanceOptimizer';
 
 export const metadata: Metadata = {
   title: "Sports Central",
@@ -39,15 +39,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head><link rel="manifest" href="/manifest.json" /><meta name="theme-color" content="#000000" /></head>
-      {/* PWAServiceWorker from original code is kept */}
-      {/* The body class and style are updated based on the changes */}
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#000000" />
+      </head>
       <body className="sports" style={{ contentVisibility: 'auto' }}>
-        <ErrorBoundary>
-          <PWAServiceWorker />
-          <MobilePerformanceOptimizer />
-          {children}
-        </ErrorBoundary>
+        <KidsModeProvider>
+          <ErrorBoundary>
+            <PWAServiceWorker />
+            <MobilePerformanceOptimizer />
+            {children}
+          </ErrorBoundary>
+        </KidsModeProvider>
       </body>
     </html>
   );
