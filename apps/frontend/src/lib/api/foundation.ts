@@ -1,4 +1,3 @@
-
 export interface Component {
   id: string;
   name: string;
@@ -21,6 +20,14 @@ export interface FoundationData {
   userId: string;
   totalPower: number;
   phases: Phase[];
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  totalPower: number;
+  completedPhases: number;
+  totalPhases: number;
 }
 
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://0.0.0.0:3001';
@@ -85,12 +92,21 @@ export const foundationApi = {
     }
   },
 
-  async getLeaderboard() {
+  async getLeaderboard(): Promise<LeaderboardEntry[]> {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/foundation/leaderboard`);
-      if (!response.ok) throw new Error('Failed to fetch leaderboard');
+      const response = await fetch(`${BACKEND_URL}/api/foundation/leaderboard`, {
+        signal: AbortSignal.timeout(5000),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Backend returned ${response.status}`);
+      }
+
       const result = await response.json();
-      return result.data;
+      return result.success ? result.data : (Array.isArray(result.data) ? result.data : []);
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
       return [];
@@ -108,6 +124,59 @@ export const foundationApi = {
       return await response.json();
     } catch (error) {
       console.error('Error submitting contribution:', error);
+      throw error;
+    }
+  }
+};
+export interface Phase {
+  id: string;
+  name: string;
+  description: string;
+  status: 'locked' | 'active' | 'completed';
+  progress: number;
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  userId: string;
+  username: string;
+  power: number;
+  contributions: number;
+}
+
+export const foundationApi = {
+  async getPhases(): Promise<Phase[]> {
+    try {
+      const response = await fetch('/api/backend/foundation/phases');
+      if (!response.ok) throw new Error('Failed to fetch phases');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching phases:', error);
+      return [];
+    }
+  },
+
+  async getLeaderboard(): Promise<LeaderboardEntry[]> {
+    try {
+      const response = await fetch('/api/backend/foundation/leaderboard');
+      if (!response.ok) throw new Error('Failed to fetch leaderboard');
+      return await response.json();
+    } catch (error) {
+      console.error('Error fetching leaderboard:', error);
+      return [];
+    }
+  },
+
+  async contributeToPower(userId: string, amount: number): Promise<void> {
+    try {
+      const response = await fetch('/api/backend/foundation/contribute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, amount })
+      });
+      if (!response.ok) throw new Error('Failed to contribute');
+    } catch (error) {
+      console.error('Error contributing:', error);
       throw error;
     }
   }

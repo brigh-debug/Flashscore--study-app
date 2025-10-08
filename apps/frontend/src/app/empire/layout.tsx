@@ -1,10 +1,6 @@
-import type { Metadata } from "next";
-import "./globals.css";
+"use client";
 
-export const metadata: Metadata = {
-  title: "MagajiCo Empire Builder",
-  description: "Build your empire from Foundation to Legendary Rooftop",
-};
+import "./globals.css";
 
 export default function RootLayout({
   children,
@@ -19,7 +15,7 @@ export default function RootLayout({
           .empire-layout [style*="position: fixed"][style*="right"] {
             display: none !important;
           }
-          
+
           .empire-layout button[style*="position: fixed"][style*="right"] {
             display: none !important;
           }
