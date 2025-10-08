@@ -1,6 +1,6 @@
 # Children's Privacy & COPPA Policy
 
-Effective date: YYYY-MM-DD
+Effective date: 2026-01-26
 
 Important notice: This COPPA Policy is intended to help you comply with the United States Children's Online Privacy Protection Act (COPPA) where it applies. It is a template and informational in nature and does not constitute legal advice. Consult counsel to confirm compliance with COPPA and any other applicable child-privacy laws (including state, national, or international laws such as GDPR where relevant).
 
