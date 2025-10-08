@@ -17,10 +17,10 @@ export async function scraperRoutes(server: FastifyInstance) {
         message: `Scraped ${odds.length} matches with odds`,
         data: odds
       });
-    } catch (error) {
+    } catch (error: any) {
       return reply.status(500).send({
         success: false,
-        error: (error as Error).message || "Odds scraping failed"
+        error: error?.message || "Odds scraping failed"
       });
     }
   });
@@ -40,10 +40,10 @@ export async function scraperRoutes(server: FastifyInstance) {
         message: `Scraped ${allPredictions.length} total predictions`,
         data: allPredictions
       });
-    } catch (error) {
+    } catch (error: any) {
       return reply.status(500).send({
         success: false,
-        error: (error as Error).message || "Predictions scraping failed"
+        error: error?.message || "Predictions scraping failed"
       });
     }
   });
@@ -52,15 +52,18 @@ export async function scraperRoutes(server: FastifyInstance) {
   server.post("/scrape/save", async (_request: FastifyRequest, reply: FastifyReply) => {
     try {
       const result = await saveScrapedMatches();
+      // Remove duplicate 'success' field if present in result
+      const { success: _ignored, ...cleanResult } = result as any;
+
       return reply.send({
         success: true,
         message: "Scraping completed and saved to database",
-        ...result
+        ...cleanResult
       });
-    } catch (error) {
+    } catch (error: any) {
       return reply.status(500).send({
         success: false,
-        error: (error as Error).message || "Save operation failed"
+        error: error?.message || "Save operation failed"
       });
     }
   });
@@ -88,10 +91,10 @@ export async function scraperRoutes(server: FastifyInstance) {
         upcomingMatches: upcomingMatches.length,
         message: "Scraper is ready"
       });
-    } catch (error) {
+    } catch (error: any) {
       return reply.status(500).send({
         success: false,
-        error: (error as Error).message || "Status check failed"
+        error: error?.message || "Status check failed"
       });
     }
   });
