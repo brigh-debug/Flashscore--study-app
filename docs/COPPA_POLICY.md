@@ -133,8 +133,8 @@ We may update this policy to reflect changes in our practices or legal requireme
 
 ## 17. Contact Information
 For questions, to exercise parental rights, or to request verifiable parental consent actions, contact:
-- Privacy Team: privacy@[yourdomain].com
-- Postal: [Organization Name], Attn: Privacy, [Address]
+- Privacy Team: privacy@sportscentral.com
+- Postal: MagajiCo, Attn: Privacy, [Address]
 - Phone: [Phone number]
 
 ## Appendix A — Sample Verifiable Parental Consent Form (Template)
