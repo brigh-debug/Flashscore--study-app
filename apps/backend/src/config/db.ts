@@ -8,25 +8,21 @@ interface MagajicoDatabase {
 
 const db: MagajicoDatabase = {};
 
-export const checkDBHealth = async (): Promise<boolean> => {
-  try {
-    if (db.isConnected !== 1) {
-      return false;
-    }
-
-    // ✅ FIXED: Add null check before accessing db
-    if (!mongoose.connection.db) {
-      console.error('❌ Database connection exists but db object is undefined');
-      return false;
-    }
-
-    await mongoose.connection.db.admin().ping();
-    return true;
-  } catch (err) {
-    console.error('❌ Database health check failed:', err);
-    return false;
+export const connectDB = async (): Promise<void> => {
+  if (db.isConnected === 1) {
+    console.log('✅ Already connected to database');
+    console.log(`📊 Connection type: ${db.connectionType || 'unknown'}`);
+    return;
   }
-};
+
+  try {
+    const MONGODB_URI = process.env.MONGODB_URI;
+
+    if (!MONGODB_URI) {
+      console.log('⚠️  MONGODB_URI is not defined - running without database');
+      db.isConnected = 0;
+      return;
+    }
 
     console.log('🔄 Connecting to MongoDB...');
 
@@ -154,9 +150,16 @@ export const getDBStatus = () => {
   };
 };
 
+// ✅ FIXED: Line 159 - Added null check for mongoose.connection.db
 export const checkDBHealth = async (): Promise<boolean> => {
   try {
     if (db.isConnected !== 1) {
+      return false;
+    }
+
+    // Add null check before accessing db
+    if (!mongoose.connection.db) {
+      console.error('❌ Database connection exists but db object is undefined');
       return false;
     }
 
