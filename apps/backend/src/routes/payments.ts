@@ -1,5 +1,9 @@
 import { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
-import { attachKidsModeFlag, filterGamblingContent } from '../middleware/kidsModeFilter';
+import { attachKidsModeFlag } from '../middleware/kidsModeFilter';
+
+interface PaymentQuery {
+  kidsMode?: string;
+}
 
 interface PaymentProcessBody {
   amount: number;
@@ -8,41 +12,59 @@ interface PaymentProcessBody {
 }
 
 const paymentsRoutes: FastifyPluginAsync = async (fastify) => {
+  // Attach kids mode middleware
+  fastify.addHook('preHandler', attachKidsModeFlag);
 
-  fastify.get('/transactions', async (request: FastifyRequest, reply: FastifyReply) => {
-    try {
-      // Fetch transactions from database
-      const transactions: any[] = []; // TODO: Implement actual DB query
+  /**
+   * GET /transactions
+   */
+  fastify.get<{ Querystring: PaymentQuery }>(
+    '/transactions',
+    async (request: FastifyRequest<{ Querystring: PaymentQuery }>, reply: FastifyReply) => {
+      try {
+        // Placeholder: Replace with DB query
+        const transactions: any[] = [];
 
-      // Filter gambling-related transactions if kids mode is active
-      const kidsMode = (request as any).kidsMode || request.query.kidsMode === 'true';
+        const kidsMode =
+          (request as any).kidsMode || request.query.kidsMode === 'true';
 
-      if (kidsMode) {
-        const filteredTransactions = transactions.filter(tx => {
-          const isGambling =
-            tx.type?.toLowerCase().includes('bet') ||
-            tx.type?.toLowerCase().includes('wager') ||
-            tx.type?.toLowerCase().includes('deposit') ||
-            tx.description?.toLowerCase().includes('gambling');
-          return !isGambling;
-        });
-        return reply.send({ success: true, data: filteredTransactions });
+        if (kidsMode) {
+          const filteredTransactions = transactions.filter((tx) => {
+            const isGambling =
+              tx.type?.toLowerCase().includes('bet') ||
+              tx.type?.toLowerCase().includes('wager') ||
+              tx.type?.toLowerCase().includes('deposit') ||
+              tx.description?.toLowerCase().includes('gambling');
+            return !isGambling;
+          });
+
+          return reply.send({ success: true, data: filteredTransactions });
+        }
+
+        return reply.send({ success: true, data: transactions });
+      } catch (error) {
+        request.log.error(error);
+        return reply
+          .status(500)
+          .send({ success: false, error: 'Failed to fetch transactions' });
       }
-
-      return reply.send({ success: true, data: transactions });
-    } catch (error) {
-      return reply.status(500).send({ success: false, error: 'Failed to fetch transactions' });
     }
-  });
+  );
 
-  fastify.post<{ Body: PaymentProcessBody }>(
+  /**
+   * POST /process
+   */
+  fastify.post<{ Body: PaymentProcessBody; Querystring: PaymentQuery }>(
     '/process',
-    async (request: FastifyRequest<{ Body: PaymentProcessBody }>, reply: FastifyReply) => {
+    async (
+      request: FastifyRequest<{ Body: PaymentProcessBody; Querystring: PaymentQuery }>,
+      reply: FastifyReply
+    ) => {
       try {
         const { amount, type, description } = request.body;
 
-        // Block gambling payments in kids mode
-        const kidsMode = (request as any).kidsMode || request.query.kidsMode === 'true';
+        const kidsMode =
+          (request as any).kidsMode || request.query.kidsMode === 'true';
 
         if (kidsMode) {
           const isGambling =
@@ -54,17 +76,21 @@ const paymentsRoutes: FastifyPluginAsync = async (fastify) => {
           if (isGambling) {
             return reply.status(403).send({
               success: false,
-              error: 'This payment type is not available in Kids Mode'
+              error: 'This payment type is not available in Kids Mode',
             });
           }
         }
 
-        // Process payment
-        // TODO: Implement actual payment processing
-
-        return reply.send({ success: true, message: 'Payment processed' });
+        // TODO: Replace with actual payment logic
+        return reply.send({
+          success: true,
+          message: `Payment of ₦${amount} for ${type} processed successfully`,
+        });
       } catch (error) {
-        return reply.status(500).send({ success: false, error: 'Payment processing failed' });
+        request.log.error(error);
+        return reply
+          .status(500)
+          .send({ success: false, error: 'Payment processing failed' });
       }
     }
   );
