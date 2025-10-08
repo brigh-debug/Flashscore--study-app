@@ -1,152 +1,193 @@
+// apps/backend/src/routes/data-rights.ts
+import {
+  FastifyInstance,
+  FastifyPluginOptions,
+  FastifyReply,
+  FastifyRequest
+} from 'fastify';
+import archiver from 'archiver';
+import { UserModel } from '../models/UserModel'; // <-- adjust import path as needed
 
-import express from "express";
-import { User as UserModel } from "../models/User";
-import archiver from "archiver";
-import { Readable } from "stream";
+interface ExportDataParams {
+  Params: {
+    childEmail: string;
+  };
+  Querystring: {
+    parentEmail: string;
+  };
+}
 
-const router = express.Router();
+interface DeleteDataBody {
+  Body: {
+    childEmail: string;
+    parentEmail: string;
+    confirmationCode: string;
+  };
+}
 
-/**
- * Export all child's data (COPPA compliance)
- * Returns: ZIP file with JSON data
- */
-router.get("/export-data/:childEmail", async (req, res) => {
-  const { childEmail } = req.params;
-  const { parentEmail } = req.query;
+interface RectifyDataBody {
+  Body: {
+    childEmail: string;
+    parentEmail: string;
+    updates: Record<string, any>;
+  };
+}
 
-  if (!parentEmail) {
-    return res.status(400).json({ error: "parentEmail query parameter required" });
-  }
+export default async function dataRightsRoutes(
+  fastify: FastifyInstance,
+  options: FastifyPluginOptions
+) {
+  /**
+   * Export child's data (COPPA compliance)
+   * Returns a ZIP file with JSON content
+   */
+  fastify.get<ExportDataParams>(
+    '/export-data/:childEmail',
+    async (request, reply) => {
+      const { childEmail } = request.params;
+      const { parentEmail } = request.query;
 
-  try {
-    const user = await UserModel.findOne({ email: childEmail });
-    if (!user) return res.status(404).json({ error: "User not found" });
+      if (!parentEmail) {
+        return reply.status(400).send({
+          error: 'parentEmail query parameter required'
+        });
+      }
 
-    // Verify parent identity
-    if (user.coppaConsent?.parentEmail !== parentEmail) {
-      return res.status(403).json({ error: "Unauthorized: parent email mismatch" });
-    }
+      try {
+        const user = await UserModel.findOne({ email: childEmail });
+        if (!user) {
+          return reply.status(404).send({ error: 'User not found' });
+        }
 
-    const userData = {
-      personalInfo: {
-        username: user.username,
-        email: user.email,
-        age: user.age,
-        createdAt: user.createdAt,
-        lastActive: user.lastActive
-      },
-      consent: user.coppaConsent,
-      preferences: user.preferences,
-      accessRestrictions: user.accessRestrictions,
-      exportedAt: new Date(),
-      exportFormat: 'JSON'
-    };
+        if (user.coppaConsent?.parentEmail !== parentEmail) {
+          return reply.status(403).send({
+            error: 'Unauthorized: parent email mismatch'
+          });
+        }
 
-    // Create ZIP archive
-    const archive = archiver('zip', { zlib: { level: 9 } });
-    
-    res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', `attachment; filename="user-data-${childEmail}-${Date.now()}.zip"`);
-    
-    archive.pipe(res);
-    archive.append(JSON.stringify(userData, null, 2), { name: 'user-data.json' });
-    await archive.finalize();
+        const userData = {
+          personalInfo: {
+            username: user.username,
+            email: user.email,
+            age: user.age,
+            createdAt: user.createdAt,
+            lastActive: user.lastActive
+          },
+          consent: user.coppaConsent,
+          preferences: user.preferences,
+          accessRestrictions: user.accessRestrictions,
+          exportedAt: new Date(),
+          exportFormat: 'JSON'
+        };
 
-  } catch (error) {
-    console.error('Export error:', error);
-    return res.status(500).json({ error: 'Failed to export data' });
-  }
-});
+        reply.header('Content-Type', 'application/zip');
+        reply.header(
+          'Content-Disposition',
+          `attachment; filename="user-data-${childEmail}-${Date.now()}.zip"`
+        );
 
-/**
- * Delete child's data (COPPA compliance)
- */
-router.post("/delete-data", async (req, res) => {
-  const { childEmail, parentEmail, confirmationCode } = req.body;
-
-  if (!childEmail || !parentEmail || !confirmationCode) {
-    return res.status(400).json({ error: "childEmail, parentEmail, and confirmationCode required" });
-  }
-
-  try {
-    const user = await UserModel.findOne({ email: childEmail });
-    if (!user) return res.status(404).json({ error: "User not found" });
-
-    // Verify parent identity
-    if (user.coppaConsent?.parentEmail !== parentEmail) {
-      return res.status(403).json({ error: "Unauthorized: parent email mismatch" });
-    }
-
-    // Verify confirmation code (implement your own logic)
-    // const isValidCode = await verifyDeletionCode(confirmationCode, user);
-    // if (!isValidCode) return res.status(401).json({ error: "Invalid confirmation code" });
-
-    // Log deletion for audit trail
-    const deletionLog = {
-      userId: user._id,
-      userEmail: user.email,
-      parentEmail,
-      deletedAt: new Date(),
-      requestIp: req.ip,
-      confirmationCode
-    };
-
-    // Permanent deletion
-    await UserModel.deleteOne({ _id: user._id });
-
-    return res.json({
-      success: true,
-      message: "User data permanently deleted",
-      deletionLog
-    });
-
-  } catch (error) {
-    console.error('Deletion error:', error);
-    return res.status(500).json({ error: 'Failed to delete data' });
-  }
-});
-
-/**
- * Rectify/update child's profile data
- */
-router.post("/rectify-data", async (req, res) => {
-  const { childEmail, parentEmail, updates } = req.body;
-
-  if (!childEmail || !parentEmail || !updates) {
-    return res.status(400).json({ error: "childEmail, parentEmail, and updates required" });
-  }
-
-  try {
-    const user = await UserModel.findOne({ email: childEmail });
-    if (!user) return res.status(404).json({ error: "User not found" });
-
-    // Verify parent identity
-    if (user.coppaConsent?.parentEmail !== parentEmail) {
-      return res.status(403).json({ error: "Unauthorized: parent email mismatch" });
-    }
-
-    // Allow only safe profile updates
-    const allowedFields = ['username', 'preferences'];
-    const safeUpdates: any = {};
-    
-    for (const key of allowedFields) {
-      if (updates[key] !== undefined) {
-        safeUpdates[key] = updates[key];
+        const archive = archiver('zip', { zlib: { level: 9 } });
+        archive.pipe(reply.raw);
+        archive.append(JSON.stringify(userData, null, 2), {
+          name: 'user-data.json'
+        });
+        await archive.finalize();
+      } catch (error) {
+        fastify.log.error(error);
+        return reply.status(500).send({ error: 'Failed to export data' });
       }
     }
+  );
 
-    await user.updateOne(safeUpdates);
+  /**
+   * Delete child's data (COPPA compliance)
+   */
+  fastify.post<DeleteDataBody>('/delete-data', async (request, reply) => {
+    const { childEmail, parentEmail, confirmationCode } = request.body;
 
-    return res.json({
-      success: true,
-      message: "Profile data updated successfully",
-      updatedFields: Object.keys(safeUpdates)
-    });
+    if (!childEmail || !parentEmail || !confirmationCode) {
+      return reply.status(400).send({
+        error: 'childEmail, parentEmail, and confirmationCode required'
+      });
+    }
 
-  } catch (error) {
-    console.error('Rectification error:', error);
-    return res.status(500).json({ error: 'Failed to update data' });
-  }
-});
+    try {
+      const user = await UserModel.findOne({ email: childEmail });
+      if (!user) {
+        return reply.status(404).send({ error: 'User not found' });
+      }
 
-export default router;
+      if (user.coppaConsent?.parentEmail !== parentEmail) {
+        return reply.status(403).send({
+          error: 'Unauthorized: parent email mismatch'
+        });
+      }
+
+      const deletionLog = {
+        userId: user._id,
+        userEmail: user.email,
+        parentEmail,
+        deletedAt: new Date(),
+        requestIp: request.ip,
+        confirmationCode
+      };
+
+      await UserModel.deleteOne({ _id: user._id });
+
+      return reply.send({
+        success: true,
+        message: 'User data permanently deleted',
+        deletionLog
+      });
+    } catch (error) {
+      fastify.log.error(error);
+      return reply.status(500).send({ error: 'Failed to delete data' });
+    }
+  });
+
+  /**
+   * Rectify/update child's profile data
+   */
+  fastify.post<RectifyDataBody>('/rectify-data', async (request, reply) => {
+    const { childEmail, parentEmail, updates } = request.body;
+
+    if (!childEmail || !parentEmail || !updates) {
+      return reply.status(400).send({
+        error: 'childEmail, parentEmail, and updates required'
+      });
+    }
+
+    try {
+      const user = await UserModel.findOne({ email: childEmail });
+      if (!user) {
+        return reply.status(404).send({ error: 'User not found' });
+      }
+
+      if (user.coppaConsent?.parentEmail !== parentEmail) {
+        return reply.status(403).send({
+          error: 'Unauthorized: parent email mismatch'
+        });
+      }
+
+      const allowedFields = ['username', 'preferences'];
+      const safeUpdates: any = {};
+
+      for (const key of allowedFields) {
+        if (updates[key] !== undefined) {
+          safeUpdates[key] = updates[key];
+        }
+      }
+
+      await user.updateOne(safeUpdates);
+
+      return reply.send({
+        success: true,
+        message: 'Profile data updated successfully',
+        updatedFields: Object.keys(safeUpdates)
+      });
+    } catch (error) {
+      fastify.log.error(error);
+      return reply.status(500).send({ error: 'Failed to update data' });
+    }
+  });
+}
