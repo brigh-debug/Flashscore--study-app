@@ -5,15 +5,20 @@ export default async function predictionsRoutes(fastify: FastifyInstance) {
   // Get all predictions
   fastify.get('/', async (request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const { limit = '50' } = request.query as { limit?: string };
+      const { limit = '50', kidsMode } = request.query as { limit?: string; kidsMode?: string };
       const limitNum = parseInt(limit) || 50;
 
       const predictions = predictionService.getAllPredictions(limitNum);
 
+      // Filter out gambling content for kids mode
+      const filteredPredictions = kidsMode === 'true'
+        ? predictions.filter((p: any) => !p.isGambling)
+        : predictions;
+
       return reply.send({
         success: true,
-        data: predictions,
-        count: predictions.length,
+        data: filteredPredictions,
+        count: filteredPredictions.length,
         modelVersion: 'MagajiCo-v3.0-Advanced'
       });
     } catch (error: any) {

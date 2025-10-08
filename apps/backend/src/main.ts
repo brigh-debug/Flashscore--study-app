@@ -9,6 +9,39 @@ const fastify = Fastify({
   logger: true,
 });
 
+// Global error handler
+fastify.setErrorHandler(async (error, request, reply) => {
+  fastify.log.error(error);
+
+  // Log to database if MongoDB is connected
+  if (mongoose.connection.readyState === 1) {
+    try {
+      await ErrorLog.create({
+        type: 'api',
+        message: error.message,
+        stack: error.stack,
+        source: `${request.method} ${request.url}`,
+        severity: error.statusCode >= 500 ? 'high' : 'medium',
+        metadata: {
+          statusCode: error.statusCode,
+          method: request.method,
+          url: request.url,
+          ip: request.ip
+        }
+      });
+    } catch (logError) {
+      fastify.log.error('Failed to log error to database:', logError);
+    }
+  }
+
+  const statusCode = error.statusCode || 500;
+  reply.status(statusCode).send({
+    success: false,
+    error: error.message || 'Internal Server Error',
+    statusCode
+  });
+});
+
 // Enable CORS for frontend access
 fastify.register(fastifyCors, {
   origin: ["http://localhost:3001", "http://127.0.0.1:5173"], // adjust to your frontend URLs
@@ -29,6 +62,8 @@ async function connectDB() {
 // Register routes
 fastify.register(newsAuthorsRoutes, { prefix: "/news" });
 fastify.register(paymentsRoutes, { prefix: "/api" });
+fastify.register(predictionsRoutes, { prefix: '/api/predictions' });
+fastify.register(errorsRoutes, { prefix: '/api' });
 
 // Start the Fastify server
 const start = async () => {
