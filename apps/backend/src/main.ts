@@ -2,15 +2,16 @@ import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 import mongoose from "mongoose";
 import newsAuthorsRoutes from "./routes/newsAuthors";
-import paymentsRoutes from './routes/payment';
-await fastify.register(paymentsRoutes, { prefix: '/api' });
+import paymentsRoutes from "./routes/payment";
+
+// Initialize Fastify
 const fastify = Fastify({
   logger: true,
 });
 
 // Enable CORS for frontend access
 fastify.register(fastifyCors, {
-  origin: ["http://localhost:3001", "http://127.0.0.1:5173"], // adjust to your frontend URL
+  origin: ["http://localhost:3001", "http://127.0.0.1:5173"], // adjust to your frontend URLs
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 });
@@ -28,14 +29,15 @@ async function connectDB() {
 
 // Register routes
 fastify.register(newsAuthorsRoutes, { prefix: "/news" });
+fastify.register(paymentsRoutes, { prefix: "/api" });
 
-// Start server
+// Start the Fastify server
 const start = async () => {
   try {
     await connectDB();
 
-    const PORT = process.env.PORT || 3001;
-    await fastify.listen({ port: Number(PORT), host: "0.0.0.0" });
+    const PORT = Number(process.env.PORT) || 3001;
+    await fastify.listen({ port: PORT, host: "0.0.0.0" });
 
     fastify.log.info(`🚀 Server running at http://localhost:${PORT}`);
   } catch (error) {
