@@ -1,9 +1,17 @@
 import Fastify from "fastify";
+import fastifyCors from "@fastify/cors";
 import mongoose from "mongoose";
 import newsAuthorsRoutes from "./routes/newsAuthors";
 
 const fastify = Fastify({
-  logger: true, // Enables built-in request logging
+  logger: true,
+});
+
+// Enable CORS for frontend access
+fastify.register(fastifyCors, {
+  origin: ["http://localhost:3000", "http://127.0.0.1:5173"], // adjust to your frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 });
 
 // MongoDB Connection
