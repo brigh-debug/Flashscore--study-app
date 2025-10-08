@@ -2,7 +2,8 @@ import Fastify from "fastify";
 import fastifyCors from "@fastify/cors";
 import mongoose from "mongoose";
 import newsAuthorsRoutes from "./routes/newsAuthors";
-
+import paymentsRoutes from './routes/payment';
+await fastify.register(paymentsRoutes, { prefix: '/api' });
 const fastify = Fastify({
   logger: true,
 });
