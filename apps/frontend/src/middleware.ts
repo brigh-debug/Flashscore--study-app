@@ -1,20 +1,38 @@
 
-import createMiddleware from 'next-intl/middleware';
+import { NextRequest, NextResponse } from 'next/server';
 import { locales } from './i18n';
 
-export default createMiddleware({
-  // A list of all locales that are supported
-  locales,
+export function middleware(request: NextRequest) {
+  // Priority: Cookie > Accept-Language header
+  const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+  const acceptLanguage = request.headers.get('Accept-Language');
   
-  // Used when no locale matches
-  defaultLocale: 'en',
+  let selectedLocale = 'en'; // default
   
-  // Automatically detect locale from Accept-Language header
-  localeDetection: true,
+  // 1. Check cookie for saved preference
+  if (cookieLocale && locales.includes(cookieLocale as any)) {
+    selectedLocale = cookieLocale;
+  } 
+  // 2. Fall back to browser Accept-Language header
+  else if (acceptLanguage) {
+    const languages = acceptLanguage
+      .split(',')
+      .map(lang => lang.split(';')[0].trim().toLowerCase().substring(0, 2));
+    
+    for (const lang of languages) {
+      if (locales.includes(lang as any)) {
+        selectedLocale = lang;
+        break;
+      }
+    }
+  }
   
-  // Prefix for locale in URL (e.g., /en, /es, /fr)
-  localePrefix: 'as-needed'
-});
+  // Set locale header for next-intl
+  const response = NextResponse.next();
+  response.headers.set('x-next-intl-locale', selectedLocale);
+  
+  return response;
+}
 
 export const config = {
   // Match all pathnames except for

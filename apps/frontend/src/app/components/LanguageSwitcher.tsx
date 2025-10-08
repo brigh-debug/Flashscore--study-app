@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { useRouter, usePathname } from 'next/navigation';
 import { locales, localeNames, type Locale } from '@/i18n';
+import { useUserPreferences } from '../providers/UserPreferencesProvider';
 
 export default function LanguageSwitcher() {
   const t = useTranslations('settings');
@@ -12,14 +13,17 @@ export default function LanguageSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const { updatePreferences } = useUserPreferences();
 
-  const handleLanguageChange = (newLocale: Locale) => {
-    // Store preference
+  const handleLanguageChange = async (newLocale: Locale) => {
+    // Update user preferences (this also sets the cookie)
+    await updatePreferences({ language: newLocale });
+    
+    // Store in localStorage as backup
     localStorage.setItem('preferredLocale', newLocale);
     
-    // Update URL
-    const newPathname = pathname.replace(`/${locale}`, `/${newLocale}`);
-    router.push(newPathname);
+    // Refresh page to apply new locale
+    router.refresh();
     setIsOpen(false);
   };
 
