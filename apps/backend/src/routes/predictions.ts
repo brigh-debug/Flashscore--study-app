@@ -16,8 +16,8 @@ export default async function predictionsRoutes(fastify: FastifyInstance) {
         count: predictions.length,
         modelVersion: 'MagajiCo-v3.0-Advanced'
       });
-    } catch (error) {
-      fastify.log.error('Error fetching predictions:', error);
+    } catch (error: any) {
+      fastify.log.error('Error fetching predictions:', error?.message || error);
       return reply.status(500).send({
         success: false,
         error: 'Failed to fetch predictions'
@@ -42,8 +42,8 @@ export default async function predictionsRoutes(fastify: FastifyInstance) {
         success: true,
         data: prediction
       });
-    } catch (error) {
-      fastify.log.error('Error fetching prediction:', error);
+    } catch (error: any) {
+      fastify.log.error('Error fetching prediction:', error?.message || error);
       return reply.status(500).send({
         success: false,
         error: 'Failed to fetch prediction'
@@ -52,15 +52,15 @@ export default async function predictionsRoutes(fastify: FastifyInstance) {
   });
 
   // Get statistics
-  fastify.get('/stats/overview', async (request: FastifyRequest, reply: FastifyReply) => {
+  fastify.get('/stats/overview', async (_request: FastifyRequest, reply: FastifyReply) => {
     try {
       const stats = predictionService.getStatistics();
       return reply.send({
         success: true,
         data: stats
       });
-    } catch (error) {
-      fastify.log.error('Error fetching statistics:', error);
+    } catch (error: any) {
+      fastify.log.error('Error fetching statistics:', error?.message || error);
       return reply.status(500).send({
         success: false,
         error: 'Failed to fetch statistics'
@@ -76,7 +76,8 @@ export default async function predictionsRoutes(fastify: FastifyInstance) {
       if (!Array.isArray(features) || features.length !== 7) {
         return reply.status(400).send({
           success: false,
-          error: 'Invalid features. Expected array of 7 numbers: [homeForm, awayForm, h2hRatio, homeGoalsFor, homeGoalsAgainst, awayGoalsFor, awayGoalsAgainst]'
+          error:
+            'Invalid features. Expected array of 7 numbers: [homeForm, awayForm, h2hRatio, homeGoalsFor, homeGoalsAgainst, awayGoalsFor, awayGoalsAgainst]'
         });
       }
 
@@ -86,8 +87,8 @@ export default async function predictionsRoutes(fastify: FastifyInstance) {
         success: true,
         data: prediction
       });
-    } catch (error) {
-      fastify.log.error('Error generating custom prediction:', error);
+    } catch (error: any) {
+      fastify.log.error('Error generating custom prediction:', error?.message || error);
       return reply.status(500).send({
         success: false,
         error: 'Failed to generate prediction'
