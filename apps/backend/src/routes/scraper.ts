@@ -5,6 +5,7 @@ import {
   saveScrapedMatches,
   getUpcomingMatches
 } from "@bservices/scraperServices";
+import StatAreaService from "@bservices/statAreaService";
 
 export async function scraperRoutes(server: FastifyInstance) {
   // --- Scrape Odds ---
@@ -24,14 +25,20 @@ export async function scraperRoutes(server: FastifyInstance) {
     }
   });
 
-  // --- Scrape Predictions ---
+  // --- Scrape Predictions (merged: BetToday + StatArea) ---
   server.get("/scrape/predictions", async (_request: FastifyRequest, reply: FastifyReply) => {
     try {
-      const predictions = await scrapeBetTodayPredictions();
+      const [betTodayPreds, statAreaPreds] = await Promise.all([
+        scrapeBetTodayPredictions(),
+        StatAreaService.fetchPredictions("https://www.statarea.com/predictions")
+      ]);
+
+      const allPredictions = [...betTodayPreds, ...statAreaPreds];
+
       return reply.send({
         success: true,
-        message: `Scraped ${predictions.length} predictions`,
-        data: predictions
+        message: `Scraped ${allPredictions.length} total predictions`,
+        data: allPredictions
       });
     } catch (error) {
       return reply.status(500).send({
@@ -64,9 +71,19 @@ export async function scraperRoutes(server: FastifyInstance) {
       const upcomingMatches = await getUpcomingMatches(5);
       const lastScrapedMatch = upcomingMatches[0];
 
+      // Optional: Ping StatArea to confirm external availability
+      let statAreaOnline = false;
+      try {
+        const preds = await StatAreaService.fetchPredictions("https://www.statarea.com/predictions");
+        statAreaOnline = preds.length > 0;
+      } catch {
+        statAreaOnline = false;
+      }
+
       return reply.send({
         success: true,
         status: "operational",
+        statAreaOnline,
         lastScrapeTime: lastScrapedMatch?.scrapedAt || null,
         upcomingMatches: upcomingMatches.length,
         message: "Scraper is ready"
