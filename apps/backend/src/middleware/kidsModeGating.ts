@@ -1,85 +1,70 @@
-
-import { Request, Response, NextFunction } from 'express';
+import { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify';
 import { User as UserModel } from '../models/User';
 
-export const preventKidsModeMonetization = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const userId = (req as any).userId || req.body.userId || req.query.userId;
-    
-    if (!userId) {
-      return res.status(401).json({ error: 'Authentication required' });
-    }
+// --- Define interfaces for clarity ---
+interface AccessRestrictions {
+  paymentsAllowed: boolean;
+  bettingAllowed: boolean;
+}
 
-    const user = await UserModel.findById(userId);
-    
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
+interface IUser {
+  _id: string;
+  age: number;
+  isMinor: boolean;
+  accessRestrictions: AccessRestrictions;
+}
 
-    // Block if user is in Kids Mode or under 18
-    if (user.isMinor || user.age < 18 || !user.accessRestrictions.paymentsAllowed) {
-      // Log audit trail
-      console.warn(`[KIDS_MODE_VIOLATION] User ${userId} attempted monetization action`, {
-        endpoint: req.path,
-        method: req.method,
-        ip: req.ip,
-        timestamp: new Date()
-      });
-
-      return res.status(403).json({
-        error: 'Payment operations are restricted for your account',
-        reason: 'age_restriction',
-        kidsMode: true
-      });
-    }
-
-    next();
-  } catch (error) {
-    console.error('Kids Mode gating error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+// --- Helper to extract userId ---
+const extractUserId = (req: FastifyRequest): string | undefined => {
+  const body: any = (req as any).body;
+  const query: any = (req as any).query;
+  const userId = (req as any).userId || body?.userId || query?.userId;
+  return userId;
 };
 
-export const preventKidsModeBetting = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const userId = (req as any).userId || req.body.userId || req.query.userId;
-    
-    if (!userId) {
-      return res.status(401).json({ error: 'Authentication required' });
+// --- Core gating function factory ---
+const preventKidsModeAction = (action: 'payments' | 'betting') => {
+  return async (req: FastifyRequest, reply: FastifyReply) => {
+    try {
+      const userId = extractUserId(req);
+      if (!userId) {
+        return reply.status(401).send({ error: 'Authentication required' });
+      }
+
+      const user = await UserModel.findById<IUser>(userId);
+      if (!user) {
+        return reply.status(404).send({ error: 'User not found' });
+      }
+
+      const allowed = user.accessRestrictions?.[`${action}Allowed` as keyof AccessRestrictions];
+      if (user.isMinor || user.age < 18 || !allowed) {
+        req.log.warn(`[KIDS_MODE_VIOLATION] User ${userId} attempted ${action} action`, {
+          endpoint: req.url,
+          method: req.method,
+          ip: req.ip,
+          timestamp: new Date(),
+        });
+
+        return reply.status(403).send({
+          error: `${action.charAt(0).toUpperCase() + action.slice(1)} operations restricted`,
+          reason: 'age_restriction',
+          kidsMode: true,
+        });
+      }
+
+      // Pass request to next handler
+    } catch (error) {
+      req.log.error(`Kids Mode ${action} gating error: ${error}`);
+      return reply.status(500).send({ error: 'Internal server error' });
     }
-
-    const user = await UserModel.findById(userId);
-    
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    if (user.isMinor || user.age < 18 || !user.accessRestrictions.bettingAllowed) {
-      console.warn(`[KIDS_MODE_VIOLATION] User ${userId} attempted betting action`, {
-        endpoint: req.path,
-        method: req.method,
-        ip: req.ip,
-        timestamp: new Date()
-      });
-
-      return res.status(403).json({
-        error: 'Betting operations are restricted for your account',
-        reason: 'age_restriction',
-        kidsMode: true
-      });
-    }
-
-    next();
-  } catch (error) {
-    console.error('Kids Mode betting gating error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+  };
 };
+
+// --- Export Fastify Plugin ---
+const kidsModeGatingPlugin: FastifyPluginAsync = async (fastify) => {
+  // Register hooks for monetization and betting
+  fastify.decorate('preventKidsModeMonetization', preventKidsModeAction('payments'));
+  fastify.decorate('preventKidsModeBetting', preventKidsModeAction('betting'));
+};
+
+export default kidsModeGatingPlugin;
