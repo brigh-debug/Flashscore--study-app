@@ -108,7 +108,7 @@ class ConfidenceEvolutionService {
     return Array.from(this.evolutions.values());
   }
 
-  getVolatilePredict ions(): EvolutionData[] {
+  getVolatilePredictions(): EvolutionData[] {
     return Array.from(this.evolutions.values())
       .filter(e => e.stabilityRating !== 'stable')
       .sort((a, b) => b.volatilityScore - a.volatilityScore);
