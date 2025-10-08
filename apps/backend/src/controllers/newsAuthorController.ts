@@ -1,13 +1,16 @@
+// apps/backend/src/controllers/newsAuthorController.ts
 import { FastifyRequest, FastifyReply } from "fastify";
 import { NewsAuthorService } from "../services/newsAuthorService";
 
-const newsAuthorService = new NewsAuthorService(); // Instantiate the service
+// REMOVED: const newsAuthorService = new NewsAuthorService();
+// All methods are called statically on the class
 
 export class NewsAuthorController {
   // GET /api/news-authors - Get all active authors
   static async getAllAuthors(request: FastifyRequest, reply: FastifyReply) {
     try {
-      const authors = await newsAuthorService.getActiveAuthors(); // Updated to use instance
+      // ✅ FIXED: Call static method on class
+      const authors = await NewsAuthorService.getActiveAuthors();
 
       reply.code(200).send({
         success: true,
@@ -30,7 +33,8 @@ export class NewsAuthorController {
   ) {
     try {
       const { id } = request.params;
-      const author = await newsAuthorService.getAuthorById(id); // Updated to use instance
+      // ✅ FIXED: Call static method on class
+      const author = await NewsAuthorService.getAuthorById(id);
 
       if (!author) {
         return reply.code(404).send({
@@ -76,7 +80,8 @@ export class NewsAuthorController {
         });
       }
 
-      const author = await newsAuthorService.createOrUpdateAuthor(authorData); // Updated to use instance
+      // ✅ FIXED: Call static method on class
+      const author = await NewsAuthorService.createOrUpdateAuthor(authorData);
 
       reply.code(200).send({
         success: true,
@@ -121,7 +126,8 @@ export class NewsAuthorController {
         });
       }
 
-      const news = await newsAuthorService.createCollaborationNews( // Updated to use instance
+      // ✅ FIXED: Call static method on class
+      const news = await NewsAuthorService.createCollaborationNews(
         id,
         collaborationData,
       );
@@ -161,7 +167,8 @@ export class NewsAuthorController {
         });
       }
 
-      const news = await newsAuthorService.generateAutoNews( // Updated to use instance
+      // ✅ FIXED: Call static method on class
+      const news = await NewsAuthorService.generateAutoNews(
         authorId,
         eventType,
         eventData,
@@ -194,7 +201,8 @@ export class NewsAuthorController {
     reply: FastifyReply,
   ) {
     try {
-      await newsAuthorService.initializeDefaultAuthors(); // Updated to use instance
+      // ✅ FIXED: Call static method on class
+      await NewsAuthorService.initializeDefaultAuthors();
 
       reply.code(200).send({
         success: true,
