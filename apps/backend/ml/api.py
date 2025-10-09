@@ -40,7 +40,7 @@ class TrainingRequest(BaseModel):
 # Response models
 class PredictionResponse(BaseModel):
     model_config = {'protected_namespaces': ()}
-
+    
     prediction: str
     confidence: float
     probabilities: Dict[str, float]

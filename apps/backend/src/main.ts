@@ -3,6 +3,11 @@ import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import mongoose from "mongoose";
+import newsAuthorsRoutes from "./routes/newsAuthors";
+import paymentsRoutes from "./routes/payment.js";
+import predictionsRoutes from './routes/predictions';
+import errorsRoutes from './routes/errors';
+import { ErrorLog } from './models/ErrorLog';
 
 import newsRoutes from "./routes/news.js";
 import predictionsRoutes from "./routes/predictions.js";
@@ -11,48 +16,61 @@ import coppaRoutes from "./routes/coppa.js";
 import errorsRoutes from "./routes/errors.js";
 import { healthRoutes } from "./routes/health.js";
 
-const fastify = Fastify({ 
-  logger: {
-    level: process.env.LOG_LEVEL || 'info',
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        translateTime: 'HH:MM:ss Z',
-        ignore: 'pid,hostname'
-      }
+// Global error handler
+fastify.setErrorHandler(async (error, request, reply) => {
+  fastify.log.error(error);
+
+  // Log to database if MongoDB is connected
+  if (mongoose.connection.readyState === 1) {
+    try {
+      await ErrorLog.create({
+        type: 'api',
+        message: error.message,
+        stack: error.stack,
+        source: `${request.method} ${request.url}`,
+        severity: error.statusCode >= 500 ? 'high' : 'medium',
+        metadata: {
+          statusCode: error.statusCode,
+          method: request.method,
+          url: request.url,
+          ip: request.ip
+        }
+      });
+    } catch (logError) {
+      fastify.log.error('Failed to log error to database:', logError);
     }
   }
+
+  const statusCode = error.statusCode || 500;
+  reply.status(statusCode).send({
+    success: false,
+    error: error.message || 'Internal Server Error',
+    statusCode
+  });
 });
 
-// Register security plugins
-// CORS - Allow only specific frontend origin
-const allowedOrigins = process.env.FRONTEND_URL 
-  ? [process.env.FRONTEND_URL]
-  : ['http://localhost:5000', 'http://127.0.0.1:5000', 'http://0.0.0.0:5000'];
+// Enable CORS for frontend access
+fastify.register(fastifyCors, {
+  origin: ["http://localhost:3001", "http://127.0.0.1:5173"], // adjust to your frontend URLs
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+});
 
-// In production, also allow the Replit domain if set
-if (process.env.REPLIT_DEV_DOMAIN) {
-  allowedOrigins.push(`https://${process.env.REPLIT_DEV_DOMAIN}`);
+// MongoDB Connection
+async function connectDB() {
+  try {
+    await mongoose.connect("mongodb://127.0.0.1:27017/sportscentral");
+    fastify.log.info("✅ MongoDB connected successfully");
+  } catch (error) {
+    fastify.log.warn({ error }, "⚠️ MongoDB connection failed - continuing without database");
+  }
 }
 
-await fastify.register(cors, { 
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests) for development only
-    if (!origin && process.env.NODE_ENV !== 'production') {
-      callback(null, true);
-      return;
-    }
-    
-    if (origin && allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'), false);
-    }
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-});
+// Register routes
+fastify.register(newsAuthorsRoutes, { prefix: "/news" });
+fastify.register(paymentsRoutes, { prefix: "/api" });
+fastify.register(predictionsRoutes, { prefix: '/api/predictions' });
+fastify.register(errorsRoutes, { prefix: '/api' });
 
 await fastify.register(helmet, {
   contentSecurityPolicy: false
