@@ -4,7 +4,7 @@ import cors from "@fastify/cors";
 import helmet from "@fastify/helmet";
 import rateLimit from "@fastify/rate-limit";
 import mongoose from "mongoose";
-import newsAuthorsRoutes from "./routes/newsAuthors";
+import newsAuthorsRoutes from "./routes/newsAuthors.js";
 import paymentsRoutes from "./routes/payment.js";
 import newsRoutes from "./routes/news.js";
 import predictionsRoutes from "./routes/predictions.js";
