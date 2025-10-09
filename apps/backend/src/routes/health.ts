@@ -1,7 +1,6 @@
 // apps/backend/src/routes/health.ts
 import { FastifyInstance } from 'fastify';
 import mongoose from 'mongoose';
-import fetch from 'node-fetch';
 
 export async function healthRoutes(fastify: FastifyInstance) {
   fastify.get('/health', async () => {
