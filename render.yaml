@@ -4,7 +4,7 @@ services:
     env: node
     region: oregon
     plan: free
-    buildCommand: npm install -g pnpm && pnpm install && cd apps/backend && pnpm run build
+    buildCommand: npm install -g pnpm && pnpm install && pnpm run build --filter=@magajico/backend
     startCommand: cd apps/backend && pnpm start
     envVars:
       - key: NODE_ENV
