@@ -139,7 +139,7 @@ export const enhancedPredictionRoutes: FastifyPluginAsync = async (fastify) => {
         });
 
       } catch (error) {
-        fastify.log.error('Batch prediction error:', error);
+        fastify.log.error({ err: error }, 'Batch prediction error');
         return reply.status(500).send({
           error: 'Batch prediction failed',
           message: error instanceof Error ? error.message : 'Unknown error'
@@ -174,7 +174,7 @@ export const enhancedPredictionRoutes: FastifyPluginAsync = async (fastify) => {
       });
 
     } catch (error) {
-      fastify.log.error('Stats error:', error);
+      fastify.log.error({ err: error }, 'Stats error');
       return reply.status(500).send({
         error: 'Failed to fetch statistics',
         message: error instanceof Error ? error.message : 'Unknown error'
