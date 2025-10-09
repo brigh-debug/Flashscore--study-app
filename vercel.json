@@ -4,8 +4,7 @@
       "src": "apps/frontend/package.json",
       "use": "@vercel/next"
     }
-  ]
-
+  ],
   "framework": "nextjs",
   "regions": ["iad1"],
   "functions": {
