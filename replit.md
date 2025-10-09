@@ -88,6 +88,27 @@ cd apps/backend/ml && python main.py
 - **ML Service (FastAPI)**: Port 8000 (0.0.0.0)
 
 ## Recent Changes
+- **2025-10-09**: Project import completion and critical security fixes
+  - **Fixed corrupted backend main.ts**: Recreated the Fastify server configuration with proper route registrations
+  - **CRITICAL SECURITY FIX**: Replaced insecure CORS configuration (`origin: true, credentials: true`) with secure allowlist-based approach
+    - CORS now validates against specific allowed origins (FRONTEND_URL env var or localhost:5000)
+    - Automatically adds REPLIT_DEV_DOMAIN in production
+    - Prevents cross-site request forgery and data exfiltration attacks
+  - **Enhanced MongoDB handling**: Made database connection optional in development, required in production
+    - Uses REQUIRE_DB environment variable to control behavior
+    - Fails fast in production if database is unavailable
+    - Logs warning but continues in development
+  - **Removed global Content-Type hook**: Routes can now set their own MIME types properly
+  - **All workflows running successfully**:
+    - Backend (Fastify) on port 3001 ✅
+    - Frontend (Next.js) on port 5000 ✅
+    - Python ML API (FastAPI) on port 8000 ✅
+  - **Feature brainstorming**: Created comprehensive feature roadmap (docs/FEATURE_BRAINSTORM.md)
+    - 10 major feature categories focused on COPPA compliance, safety, and education
+    - Enhanced parental controls, educational features, privacy tools
+    - Accessibility features, financial literacy, health education
+    - Implementation priorities and anti-patterns to avoid
+
 - **2025-10-08**: Enhanced payment processing with age-based restrictions
   - Implemented comprehensive age verification for all payment operations
   - Added age verification middleware (apps/backend/src/middleware/ageVerification.ts)
@@ -124,8 +145,17 @@ cd apps/backend/ml && python main.py
   - Configured autoscale deployment
   - Added .gitignore patterns for Node.js and Python
 
-## Notes
-- The app gracefully handles missing MongoDB connection
+## Security Notes
+- **CORS is configured with allowlist**: Only specific origins are allowed (no permissive `origin: true`)
+- **MongoDB is optional in development**: App runs without database for local testing
+- **Production database enforcement**: Set `REQUIRE_DB=true` or `NODE_ENV=production` to require database
 - Service Worker is registered for PWA functionality
-- Cross-origin requests are configured for Replit's iframe proxy
 - The frontend uses 0.0.0.0:5000 to work with Replit's preview system
+
+## Important Environment Variables
+Before deploying to production, ensure these are set:
+- `FRONTEND_URL`: The frontend URL for CORS validation
+- `REPLIT_DEV_DOMAIN`: Automatically detected, but verify it's correct
+- `REQUIRE_DB`: Set to 'true' in production to enforce database connection
+- `NODE_ENV`: Set to 'production' for production deployments
+- `MONGODB_URI`: Your MongoDB connection string
