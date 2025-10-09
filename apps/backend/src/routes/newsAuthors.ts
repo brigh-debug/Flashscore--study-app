@@ -126,4 +126,112 @@ export default async function newsAuthorsRoutes(fastify: FastifyInstance) {
   }, async (request: any, reply: FastifyReply) => {
     return NewsAuthorController.generateAutoNews(request, reply);
   });
+
+  // ----- Routes for Internal Use (e.g., testing, specific API endpoints) -----
+
+  // Get top authors
+  fastify.get('/authors/top', async (request, reply) => {
+    try {
+      const { limit = 10 } = request.query as any;
+      const authors = await NewsAuthorService.getTopAuthors(parseInt(limit));
+
+      return reply.send({
+        success: true,
+        data: authors
+      });
+    } catch (error) {
+      fastify.log.error('Error fetching top authors:', error instanceof Error ? error.message : String(error));
+      return reply.status(500).send({
+        success: false,
+        error: 'Failed to fetch top authors'
+      });
+    }
+  });
+
+  // Get single author by ID
+  fastify.get('/authors/:id', async (request, reply) => {
+    try {
+      const { id } = request.params as { id: string };
+      const author = await NewsAuthorService.getAuthorById(id);
+
+      if (!author) {
+        return reply.status(404).send({
+          success: false,
+          error: 'Author not found'
+        });
+      }
+
+      return reply.send({
+        success: true,
+        data: author
+      });
+    } catch (error) {
+      fastify.log.error('Error fetching author:', error instanceof Error ? error.message : String(error));
+      return reply.status(500).send({
+        success: false,
+        error: 'Failed to fetch author'
+      });
+    }
+  });
+
+  // Create author
+  fastify.post('/authors', async (request, reply: FastifyReply) => {
+    try {
+      const { id, name, icon, bio, expertise } = request.body as CreateAuthorBody;
+      const newAuthor = await NewsAuthorService.createAuthor({
+        id,
+        name,
+        icon,
+        bio,
+        expertise
+      });
+
+      // Track collaboration event (service not yet implemented)
+      // await collaborationService.trackEvent({
+      //   authorId: newAuthor._id.toString(),
+      //   eventType: 'author_created',
+      //   eventData: { name, bio, expertise }
+      // });
+
+      return reply.status(201).send({
+        success: true,
+        author: newAuthor
+      });
+    } catch (error) {
+      fastify.log.error('Error creating author:', error instanceof Error ? error.message : String(error));
+      return reply.status(500).send({
+        success: false,
+        error: 'Failed to create author'
+      });
+    }
+  });
+
+  // Track collaboration event
+  fastify.post('/authors/track-event', async (request, reply: FastifyReply) => {
+    try {
+      const { authorId, eventType, eventData } = request.body as {
+        authorId: string;
+        eventType: string;
+        eventData: any;
+      };
+
+      // Track collaboration event (service not yet implemented)
+      // await collaborationService.trackEvent({
+      //   authorId: authorId,
+      //   eventType: eventType,
+      //   eventData: eventData
+      // });
+
+      return reply.send({
+        success: true,
+        message: 'Event tracked successfully (simulation)'
+      });
+    } catch (error) {
+      fastify.log.error('Error tracking event:', error instanceof Error ? error.message : String(error));
+      return reply.status(500).send({
+        success: false,
+        error: 'Failed to track event'
+      });
+    }
+  });
 }
