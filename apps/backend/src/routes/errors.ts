@@ -37,7 +37,7 @@ const errorsRoutes: FastifyPluginAsync = async (fastify) => {
         total: errors.length
       });
     } catch (error) {
-      fastify.log.error('Error fetching error logs');
+      fastify.log.error({ err: error }, 'Error fetching error logs');
       return reply.status(500).send({
         success: false,
         error: 'Failed to fetch error logs'
@@ -63,7 +63,7 @@ const errorsRoutes: FastifyPluginAsync = async (fastify) => {
         data: error
       });
     } catch (error) {
-      fastify.log.error('Error fetching error log');
+      fastify.log.error({ err: error }, 'Error fetching error log');
       return reply.status(500).send({
         success: false,
         error: 'Failed to fetch error log'
@@ -93,7 +93,7 @@ const errorsRoutes: FastifyPluginAsync = async (fastify) => {
         data: error
       });
     } catch (error) {
-      fastify.log.error('Error resolving error log');
+      fastify.log.error({ err: error }, 'Error resolving error log');
       return reply.status(500).send({
         success: false,
         error: 'Failed to resolve error log'
@@ -135,7 +135,7 @@ const errorsRoutes: FastifyPluginAsync = async (fastify) => {
         }
       });
     } catch (error) {
-      fastify.log.error('Error fetching error stats');
+      fastify.log.error({ err: error }, 'Error fetching error stats');
       return reply.status(500).send({
         success: false,
         error: 'Failed to fetch error statistics'
@@ -155,7 +155,7 @@ const errorsRoutes: FastifyPluginAsync = async (fastify) => {
         data: errorLog
       });
     } catch (error) {
-      fastify.log.error('Error logging error');
+      fastify.log.error({ err: error }, 'Error logging error');
       return reply.status(500).send({
         success: false,
         error: 'Failed to log error'
