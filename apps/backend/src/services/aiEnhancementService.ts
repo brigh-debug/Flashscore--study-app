@@ -72,7 +72,7 @@ Provide:
         throw new Error(`OpenAI API error: ${response.status}`);
       }
 
-      const data = await response.json();
+      const data: any = await response.json();
       const insights = data.choices[0]?.message?.content || 'No insights generated';
 
       return {

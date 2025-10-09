@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { NewsAuthorController } from '../controllers/newsAuthorController';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { newsAuthorService } from '../services/newsAuthorService';
+import { NewsAuthorService } from '../services/newsAuthorService';
 
 // ==== Request Body Interfaces (DTOs) ====
 interface CreateAuthorBody {
@@ -31,7 +31,7 @@ export default async function newsAuthorsRoutes(fastify: FastifyInstance) {
   ) => {
     try {
       const { limit = 10 } = request.query as { limit?: number };
-      const authors = await newsAuthorService.getTopAuthors(Number(limit));
+      const authors = await NewsAuthorService.getActiveAuthors();
 
       return reply.send({
         success: true,
@@ -39,7 +39,7 @@ export default async function newsAuthorsRoutes(fastify: FastifyInstance) {
         total: authors.length
       });
     } catch (error) {
-      fastify.log.error('Error fetching news authors:', error);
+      fastify.log.error({ err: error }, 'Error fetching news authors');
       return reply.status(500).send({
         success: false,
         error: 'Failed to fetch news authors'
@@ -54,7 +54,7 @@ export default async function newsAuthorsRoutes(fastify: FastifyInstance) {
   ) => {
     try {
       const { id } = request.params;
-      const author = await newsAuthorService.getAuthorById(id);
+      const author = await NewsAuthorService.getAuthorById(id);
 
       if (!author) {
         return reply.status(404).send({
@@ -68,7 +68,7 @@ export default async function newsAuthorsRoutes(fastify: FastifyInstance) {
         author
       });
     } catch (error) {
-      fastify.log.error('Error fetching author:', error);
+      fastify.log.error({ err: error }, 'Error fetching author');
       return reply.status(500).send({
         success: false,
         error: 'Failed to fetch author'
@@ -105,10 +105,7 @@ export default async function newsAuthorsRoutes(fastify: FastifyInstance) {
   // Create or update author
   fastify.post('/news-authors', {
     preHandler: authMiddleware.requireMemberAccess
-  }, async (
-    request: FastifyRequest<{ Body: CreateAuthorBody }>,
-    reply: FastifyReply
-  ) => {
+  }, async (request: any, reply: FastifyReply) => {
     return NewsAuthorController.createOrUpdateAuthor(request, reply);
   });
 
@@ -116,21 +113,17 @@ export default async function newsAuthorsRoutes(fastify: FastifyInstance) {
   fastify.post<{ Params: { id: string }; Body: CreateCollaborationBody }>(
     '/:id/collaborations',
     async (request, reply) => {
-      // This part of the code was updated to fix type definitions for route handlers.
-      // The following line was also updated to address a type issue with collaborationService.trackCollaborationEvent
-      await collaborationService.trackCollaborationEvent(request as any, {
-        // ...collaboration event data
-      });
+      // TODO: Implement collaboration tracking service
+      // await collaborationService.trackCollaborationEvent(request as any, {
+      //   ...collaboration event data
+      // });
       return NewsAuthorController.createCollaborationNews(request, reply);
     });
 
   // Auto-generate news
   fastify.post('/news-authors/auto-news', {
     preHandler: authMiddleware.requireMemberAccess
-  }, async (
-    request: FastifyRequest,
-    reply: FastifyReply
-  ) => {
+  }, async (request: any, reply: FastifyReply) => {
     return NewsAuthorController.generateAutoNews(request, reply);
   });
 }
