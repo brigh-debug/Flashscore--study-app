@@ -135,7 +135,7 @@ const errorsRoutes: FastifyPluginAsync = async (fastify) => {
         }
       });
     } catch (error) {
-      fastify.log.error('Error fetching error stats:', error instanceof Error ? error.message : String(error));
+      fastify.log.error({ err: error }, 'Error fetching error stats');
       return reply.status(500).send({
         success: false,
         error: 'Failed to fetch error statistics'
@@ -155,7 +155,7 @@ const errorsRoutes: FastifyPluginAsync = async (fastify) => {
         data: errorLog
       });
     } catch (error) {
-      fastify.log.error('Error logging error:', error instanceof Error ? error.message : String(error));
+      fastify.log.error({ err: error }, 'Error logging error');
       return reply.status(500).send({
         success: false,
         error: 'Failed to log error'

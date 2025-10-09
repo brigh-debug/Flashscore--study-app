@@ -129,15 +129,20 @@ export default async function newsAuthorsRoutes(fastify: FastifyInstance) {
 
   // ----- Routes for Internal Use (e.g., testing, specific API endpoints) -----
 
-  // Get top authors
+  // Get top authors (using getActiveAuthors instead)
   fastify.get('/authors/top', async (request, reply) => {
     try {
       const { limit = 10 } = request.query as any;
-      const authors = await NewsAuthorService.getTopAuthors(parseInt(limit));
+      const authors = await NewsAuthorService.getActiveAuthors();
+      
+      // Sort by collaboration count and limit
+      const topAuthors = authors
+        .sort((a, b) => (b.collaborationCount || 0) - (a.collaborationCount || 0))
+        .slice(0, parseInt(limit));
 
       return reply.send({
         success: true,
-        data: authors
+        data: topAuthors
       });
     } catch (error) {
       fastify.log.error('Error fetching top authors:', error instanceof Error ? error.message : String(error));
@@ -174,24 +179,17 @@ export default async function newsAuthorsRoutes(fastify: FastifyInstance) {
     }
   });
 
-  // Create author
+  // Create author (using createOrUpdateAuthor)
   fastify.post('/authors', async (request, reply: FastifyReply) => {
     try {
       const { id, name, icon, bio, expertise } = request.body as CreateAuthorBody;
-      const newAuthor = await NewsAuthorService.createAuthor({
+      const newAuthor = await NewsAuthorService.createOrUpdateAuthor({
         id,
         name,
         icon,
         bio,
         expertise
       });
-
-      // Track collaboration event (service not yet implemented)
-      // await collaborationService.trackEvent({
-      //   authorId: newAuthor._id.toString(),
-      //   eventType: 'author_created',
-      //   eventData: { name, bio, expertise }
-      // });
 
       return reply.status(201).send({
         success: true,
