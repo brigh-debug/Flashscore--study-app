@@ -123,14 +123,14 @@ fastify.register(healthRoutes, { prefix: "/health" });
 fastify.register(newsRoutes, { prefix: "/news" });
 fastify.register(newsAuthorsRoutes, { prefix: "/news" });
 fastify.register(paymentsRoutes, { prefix: "/api" });
-fastify.register(predictionsRoutes, { prefix: "/predictions" });
+fastify.register(predictionsRoutes, { prefix: "/api/predictions" });
 fastify.register(matchRoutes, { prefix: "/matches" });
 fastify.register(coppaRoutes, { prefix: "/coppa" });
 fastify.register(errorsRoutes, { prefix: "/errors" });
 
 // Start server
 const PORT = Number(process.env.PORT) || 3001;
-const HOST = process.env.NODE_ENV === 'production' ? '0.0.0.0' : 'localhost';
+const HOST = '0.0.0.0';
 
 fastify.listen({ port: PORT, host: HOST }).then((address) => {
   fastify.log.info(`✅ Backend running at ${address}`);
