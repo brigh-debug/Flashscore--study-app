@@ -30,13 +30,13 @@
       "@config/*": ["apps/frontend/src/app/config/*"],
 
       // --- Backend ---
-      "@bakcomponents/*": ["apps/backend/src/components/*"],
-      "@baktypes/*": ["apps/backend/src/types/*"],
+      "@bcomponents/*": ["apps/backend/src/components/*"],
+      "@btypes/*": ["apps/backend/src/types/*"],
       "@bakcontrollers/*": ["apps/backend/src/controllers/*"],
-      "@bakroutes/*": ["apps/backend/src/routes/*"],
-      "@bakservices/*": ["apps/backend/src/services/*"],
-      "@bakstyles/*": ["apps/backend/src/styles/*"],
-      "@bakconfig/*": ["apps/backend/src/config/*"],
+      "@broutes/*": ["apps/backend/src/routes/*"],
+      "@bservices/*": ["apps/backend/src/services/*"],
+      "@bstyles/*": ["apps/backend/src/styles/*"],
+      "@bconfig/*": ["apps/backend/src/config/*"],
 
       // --- Shared ---
       "@shared/types/*": ["packages/shared/src/libs/types/*"],
