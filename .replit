@@ -1,4 +1,4 @@
-modules = ["nodejs-20", "web", "python-3.11"]
+modules = ["python-3.11", "nodejs-20", "web"]
 run = "cd apps/frontend && npm run dev"
 
 [nix]
