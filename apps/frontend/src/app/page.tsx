@@ -2,6 +2,8 @@
 import React, { Suspense, useState } from "react";
 import { useTranslations } from 'next-intl';
 import LanguageSwitcher from './components/LanguageSwitcher';
+import EnhancedSocialShare from './components/EnhancedSocialShare';
+import MobileGestureEnhancements from './components/MobileGestureEnhancements';
 import ComprehensiveSportsHub from "@/app/components/ComprehensiveSportsHub";
 import SocialHub from "./components/SocialHub";
 import PredictionLeague from "./components/PredictionLeague";
@@ -31,6 +33,9 @@ import HorizontalCarousel from './components/HorizontalCarousel';
 import ExtraSportsCoverage from './components/ExtraSportsCoverage';
 import StakingSystem from './components/StakingSystem';
 import ARPredictionOverlay from './components/ARPredictionOverlay';
+import StreakTracker from './components/StreakTracker';
+import LiveMatchTracker from './components/LiveMatchTracker';
+import PerformanceDashboard from './components/PerformanceDashboard';
 
 export default function HomePage() {
   const t = useTranslations('common');
@@ -161,7 +166,7 @@ export default function HomePage() {
 
           <QuickAccessBar />
 
-          <PullToRefresh onRefresh={handleRefresh} isRefreshing={isRefreshing}>
+          <PullToRefresh onRefresh={handleRefresh}>
             {activeSection === 'home' && (
               <>
                 <Suspense fallback={<SmartLoadingState type="card" />}>
@@ -288,6 +293,23 @@ export default function HomePage() {
 
             {/* Enhanced Personalization Section */}
             <EnhancedPersonalization />
+
+            {/* Streak Tracker, Live Match Updates, and Performance Dashboard */}
+            {activeSection === 'home' && (
+              <>
+                <Suspense fallback={<SmartLoadingState type="card" />}>
+                  <StreakTracker />
+                </Suspense>
+
+                <div style={{ marginTop: '24px' }}>
+                  <LiveMatchTracker />
+                </div>
+
+                <div style={{ marginTop: '24px' }}>
+                  <PerformanceDashboard />
+                </div>
+              </>
+            )}
 
             {/* Floating AI Features - Available on all sections except empire */}
             {typeof window !== 'undefined' && !window.location.pathname.startsWith('/empire') && (
