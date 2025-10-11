@@ -72,6 +72,22 @@ jobs:
       
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build frontend for smoke test
+        run: |
+          # Build only the frontend workspace to verify build succeeds in CI
+          pnpm --filter @magajico/frontend build
+
+      - name: Verify frontend build output (smoke)
+        run: |
+          # ensure the Next build output exists and is non-empty
+          if [ -d apps/frontend/.next ] && [ "$(ls -A apps/frontend/.next 2>/dev/null)" ]; then
+            echo "✅ Frontend build artifacts present"
+          else
+            echo "❌ Frontend build output missing or empty: apps/frontend/.next" >&2
+            ls -la apps/frontend || true
+            exit 1
+          fi
       
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps chromium
