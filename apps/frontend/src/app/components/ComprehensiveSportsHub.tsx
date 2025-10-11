@@ -286,7 +286,6 @@ const ComprehensiveSportsHub: React.FC = () => {
   );
 
   const MatchCard = ({ match }: { match: EnhancedMatch }) => (
-    <div
       className="ios-card hover-lift"
       style={{
         padding: '20px',

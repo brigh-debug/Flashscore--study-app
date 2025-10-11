@@ -1,14 +1,20 @@
-
-import React from 'react';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
+import React from "react";
+import { NextIntlClientProvider } from "next-intl";
+import { getMessages } from "next-intl/server";
 import { KidsModeProvider } from "../context/KidsModeContext";
 import { UserPreferencesProvider } from "./providers/UserPreferencesProvider";
 import "./styles/globals.css";
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from "next";
 import PWAServiceWorker from "./components/PWAServiceWorker";
-import ErrorBoundary from './components/ErrorBoundary/ErrorBoundary';
-import MobilePerformanceOptimizer from './components/MobilePerformanceOptimizer';
+import PushNotificationManager from "./components/PushNotificationManager";
+import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
+import MobilePerformanceOptimizer from "./components/MobilePerformanceOptimizer";
+
+export const viewport = {
+  themeColor: '#000000',
+};
 
 export const metadata: Metadata = {
   title: "Sports Central",
@@ -37,32 +43,30 @@ export const viewport = {
 
 export default async function RootLayout({
   children,
-  params
+  params,
 }: {
   children: React.ReactNode;
   params?: { locale?: string };
 }) {
   const messages = await getMessages();
-  const locale = params?.locale || 'en';
+  const locale = params?.locale || "en";
 
   return (
     <html lang={locale} suppressHydrationWarning>
       <head>
-        <link rel="manifest" href="/manifest.json" />
-        <meta name="theme-color" content="#000000" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://api.sportsdata.io" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=5.0"
+        />
       </head>
-      <body className="sports" style={{ contentVisibility: 'auto' }}>
-        <NextIntlClientProvider messages={messages}>
-          <UserPreferencesProvider>
-            <KidsModeProvider>
-              <ErrorBoundary>
-                <PWAServiceWorker />
-                <MobilePerformanceOptimizer />
-                {children}
-              </ErrorBoundary>
-            </KidsModeProvider>
-          </UserPreferencesProvider>
-        </NextIntlClientProvider>
+      <body className="sports">
+        <PWAServiceWorker />
+        <PushNotificationManager />
+        {children}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
