@@ -10,9 +10,11 @@ import {
   Users,
   Wallet,
   MoreHorizontal,
+  Globe,
 } from "lucide-react";
 import Link from "next/link";
 import LanguageSwitcher from "./LanguageSwitcher";
+import GoogleStyleMenu from "./GoogleStyleMenu";
 
 interface SubItem {
   label: string;
@@ -211,7 +213,9 @@ const NavBar: React.FC = () => {
           </div>
 
           {/* Right-side quick links / buttons */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex items-center space-x-3">
+            <LanguageSwitcher />
+            <GoogleStyleMenu />
             <button className="px-4 py-2 bg-green-500 rounded-full text-sm font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-gray-900 transition cursor-pointer" aria-label="Sign up for an account">
               Sign Up
             </button>
@@ -262,8 +266,18 @@ const NavBar: React.FC = () => {
               </div>
             ))}
 
+            {/* Mobile Language & Apps */}
+            <div className="px-4 py-3 border-t border-gray-700">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="flex-1">
+                  <LanguageSwitcher />
+                </div>
+                <GoogleStyleMenu />
+              </div>
+            </div>
+
             {/* Mobile buttons */}
-            <div className="flex flex-col space-y-2 px-4 py-3 mt-2 border-t border-gray-700">
+            <div className="flex flex-col space-y-2 px-4 py-3 border-t border-gray-700">
               <button className="px-4 py-2 bg-green-500 rounded-full text-sm font-medium hover:bg-green-600 transition w-full">
                 Sign Up
               </button>

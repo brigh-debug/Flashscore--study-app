@@ -66,11 +66,6 @@ export default function HomePage() {
         <section className="relative overflow-hidden py-12 px-6">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 animate-pulse"></div>
           
-          {/* Mobile Language Switcher */}
-          <div className="md:hidden absolute top-4 right-4 z-20">
-            <LanguageSwitcher />
-          </div>
-          
           <div className="relative z-10 max-w-6xl mx-auto">
             <div className="text-center mb-8">
               <h1 className="text-6xl font-extrabold mb-4 bg-gradient-to-r from-white via-cyan-400 to-blue-500 bg-clip-text text-transparent">

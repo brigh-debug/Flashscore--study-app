@@ -14,14 +14,14 @@ interface AppMenuItem {
 
 const appMenuItems: AppMenuItem[] = [
   { name: 'Home', icon: '🏠', href: '/', description: 'Main Dashboard', color: 'bg-blue-500' },
+  { name: 'Live Matches', icon: '⚽', href: '/matches', description: 'FlashScore Style', color: 'bg-emerald-500' },
   { name: 'News', icon: '📰', href: '/news', description: 'Latest Sports News', color: 'bg-green-500' },
   { name: 'Predictions', icon: '📊', href: '/predictions', description: 'AI Predictions', color: 'bg-purple-500' },
+  { name: 'Kids Mode', icon: '🌈', href: '/kids-mode', description: 'Safe Learning', color: 'bg-pink-500' },
   { name: 'Authors', icon: '✍️', href: '/author', description: 'Content Authors', color: 'bg-orange-500' },
   { name: 'Partnerships', icon: '🤝', href: '/partnerships', description: 'Partner Portal', color: 'bg-teal-500' },
   { name: 'Management', icon: '🛠️', href: '/management/users', description: 'Admin Panel', color: 'bg-red-500' },
   { name: 'Analytics', icon: '📈', href: '/management/analytics', description: 'Data Analytics', color: 'bg-indigo-500' },
-  { name: 'Privacy', icon: '🔒', href: '/privacy', description: 'Privacy Policy', color: 'bg-gray-500' },
-  { name: 'Terms', icon: '📜', href: '/terms', description: 'Terms of Service', color: 'bg-yellow-500' },
 ];
 
 export default function GoogleStyleMenu() {

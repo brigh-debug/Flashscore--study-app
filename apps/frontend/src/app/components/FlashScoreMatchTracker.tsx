@@ -143,25 +143,31 @@ export default function FlashScoreMatchTracker() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 to-green-100 p-4 md:p-8">
       {/* Header */}
-      <div className="bg-white rounded-2xl shadow-xl p-6 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
-              <span className="text-2xl">⚽</span>
+      <div className="bg-white rounded-2xl shadow-xl p-4 md:p-6 mb-6">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3 md:gap-4">
+            <div className="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+              <span className="text-xl md:text-2xl">⚽</span>
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">Match Center</h1>
-              <p className="text-sm text-gray-500">Today's Matches</p>
+              <h1 className="text-xl md:text-2xl font-bold text-gray-800">Match Center</h1>
+              <p className="text-xs md:text-sm text-gray-500">Live • Today's Matches</p>
             </div>
           </div>
-          <div className="hidden md:flex items-center gap-3">
-            <LanguageSwitcher />
-            <div className="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-lg">
-              <Circle className="w-4 h-4 fill-emerald-500 text-emerald-500 animate-pulse" />
-              <div className="flex gap-1">
-                <div className="w-1.5 h-4 bg-emerald-500 rounded-full animate-pulse" style={{ animationDelay: '0ms' }} />
-                <div className="w-1.5 h-4 bg-emerald-500 rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
-                <div className="w-1.5 h-4 bg-emerald-500 rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
+          <div className="flex items-center gap-2 md:gap-3">
+            <div className="flex md:hidden">
+              <LanguageSwitcher />
+            </div>
+            <div className="hidden md:flex items-center gap-3">
+              <LanguageSwitcher />
+              <div className="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-lg border border-emerald-200">
+                <Circle className="w-4 h-4 fill-emerald-500 text-emerald-500 animate-pulse" />
+                <span className="text-sm font-semibold text-emerald-700">LIVE</span>
+                <div className="flex gap-1">
+                  <div className="w-1.5 h-4 bg-emerald-500 rounded-full animate-pulse" style={{ animationDelay: '0ms' }} />
+                  <div className="w-1.5 h-4 bg-emerald-500 rounded-full animate-pulse" style={{ animationDelay: '150ms' }} />
+                  <div className="w-1.5 h-4 bg-emerald-500 rounded-full animate-pulse" style={{ animationDelay: '300ms' }} />
+                </div>
               </div>
             </div>
           </div>

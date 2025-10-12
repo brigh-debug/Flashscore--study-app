@@ -65,18 +65,18 @@ export default function LanguageSwitcher() {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-cyan-500/30 to-blue-500/30 hover:from-cyan-500/40 hover:to-blue-500/40 transition-all border-2 border-cyan-400/50 shadow-lg hover:shadow-cyan-400/50 hover:scale-105 active:scale-95"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white/10 hover:bg-white/20 transition-all border border-white/20 hover:border-cyan-400/50 shadow-md hover:shadow-lg group"
         style={{
-          minHeight: '48px',
-          minWidth: '48px'
+          minHeight: '44px',
+          minWidth: '44px'
         }}
         aria-label={t('selectLanguage')}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <Globe className="w-6 h-6 text-cyan-300 animate-pulse" />
-        <span className="font-bold text-white hidden sm:inline">{localeNames[locale]}</span>
-        <ChevronDown className={`w-5 h-5 text-cyan-300 transform transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <Globe className="w-5 h-5 text-cyan-300 group-hover:text-cyan-200 transition-colors" />
+        <span className="font-semibold text-white text-sm hidden md:inline">{localeNames[locale]}</span>
+        <ChevronDown className={`w-4 h-4 text-cyan-300 group-hover:text-cyan-200 transform transition-all ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
