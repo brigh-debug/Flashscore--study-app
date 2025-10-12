@@ -31,6 +31,10 @@ interface QuickMenuItem {
 
 const navItems: NavItem[] = [
   {
+    label: "⚽ Matches",
+    link: "/matches",
+  },
+  {
     label: "Sports",
     link: "/sports",
     subItems: [
@@ -44,12 +48,12 @@ const navItems: NavItem[] = [
     link: "/predictions",
   },
   {
-    label: "Leaderboard",
-    link: "/leaderboard",
+    label: "🌈 Kids Mode",
+    link: "/kids-mode",
   },
   {
-    label: "About",
-    link: "/about",
+    label: "Leaderboard",
+    link: "/leaderboard",
   },
 ];
 
