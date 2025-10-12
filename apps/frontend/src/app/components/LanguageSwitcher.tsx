@@ -43,21 +43,22 @@ export default function LanguageSwitcher() {
   const handleLanguageChange = async (newLocale: Locale) => {
     setIsOpen(false);
     
+    if (newLocale === locale) return;
+    
     // Set the cookie with proper attributes
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
     
     // Update preferences
-    await updatePreferences({ language: newLocale });
+    try {
+      await updatePreferences({ language: newLocale });
+    } catch (error) {
+      console.error('Failed to update preferences:', error);
+    }
+    
     localStorage.setItem('preferredLocale', newLocale);
     
-    // Use Next.js router for smooth navigation
-    const currentPath = pathname || '/';
-    router.refresh();
-    
-    // Small delay to ensure cookie is set before refresh
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+    // Force reload to apply new locale
+    window.location.href = window.location.pathname;
   };
 
   return (

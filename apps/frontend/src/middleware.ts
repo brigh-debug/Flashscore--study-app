@@ -8,7 +8,7 @@ const defaultLocale = 'en';
 function getLocale(request: NextRequest): string {
   // 1. Check cookie first (highest priority - user explicitly selected)
   const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
-  if (cookieLocale && locales.includes(cookieLocale)) {
+  if (cookieLocale && locales.includes(cookieLocale as any)) {
     return cookieLocale;
   }
 
@@ -17,7 +17,7 @@ function getLocale(request: NextRequest): string {
   if (preferencesCookie) {
     try {
       const preferences = JSON.parse(preferencesCookie);
-      if (preferences.language && locales.includes(preferences.language)) {
+      if (preferences.language && locales.includes(preferences.language as any)) {
         return preferences.language;
       }
     } catch (e) {
@@ -34,7 +34,7 @@ function getLocale(request: NextRequest): string {
     'pt': 'pt', 'br': 'pt',
     'gb': 'en', 'us': 'en', 'au': 'en', 'nz': 'en'
   };
-  if (geoLocale && geoLanguageMap[geoLocale] && locales.includes(geoLanguageMap[geoLocale])) {
+  if (geoLocale && geoLanguageMap[geoLocale] && locales.includes(geoLanguageMap[geoLocale] as any)) {
     return geoLanguageMap[geoLocale];
   }
 
