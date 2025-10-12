@@ -61,15 +61,15 @@ export default function HomePage() {
       <NavBar />
       <AuthorsSidebar />
       
-      {/* Language Switcher - Fixed Position */}
-      <div className="fixed top-20 right-6 z-40">
-        <LanguageSwitcher />
-      </div>
-      
       <div className="ml-80 mt-16">
         {/* Hero Section with Live Stats */}
         <section className="relative overflow-hidden py-12 px-6">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 animate-pulse"></div>
+          
+          {/* Mobile Language Switcher */}
+          <div className="md:hidden absolute top-4 right-4 z-20">
+            <LanguageSwitcher />
+          </div>
           
           <div className="relative z-10 max-w-6xl mx-auto">
             <div className="text-center mb-8">

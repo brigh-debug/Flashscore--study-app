@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Activity, Circle } from 'lucide-react';
+import LanguageSwitcher from './LanguageSwitcher';
 
 interface Match {
   id: string;
@@ -154,6 +155,7 @@ export default function FlashScoreMatchTracker() {
             </div>
           </div>
           <div className="hidden md:flex items-center gap-3">
+            <LanguageSwitcher />
             <div className="flex items-center gap-2 bg-emerald-50 px-4 py-2 rounded-lg">
               <Circle className="w-4 h-4 fill-emerald-500 text-emerald-500 animate-pulse" />
               <div className="flex gap-1">

@@ -12,6 +12,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import Link from "next/link";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 interface SubItem {
   label: string;
