@@ -285,8 +285,8 @@ export default function MagajiCoManager({
           duration: 5000
         });
       }
-    } catch (error) {
-      console.error('Error getting CEO response:', error);
+    } catch (err) {
+      console.error('Error getting CEO response:', err);
       const errorMessage: ChatMessage = {
         id: Math.random().toString(36).substr(2, 9),
         text: "I'm having trouble processing that right now. Please try again.",

@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import ComprehensiveSportsHub from "@/app/components/ComprehensiveSportsHub";
 import AuthorsSidebar from "@/app/components/AuthorsSidebar";
+import LanguageSwitcher from "@/app/components/LanguageSwitcher";
+import NavBar from "@/app/components/NavBar";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -56,9 +58,10 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
+      <NavBar />
       <AuthorsSidebar />
       
-      <div className="ml-80">
+      <div className="ml-80 mt-16">
         {/* Hero Section with Live Stats */}
         <section className="relative overflow-hidden py-12 px-6">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 animate-pulse"></div>
@@ -135,14 +138,20 @@ export default function HomePage() {
             </div>
 
             {/* Carousel Indicators */}
-            <div className="flex justify-center gap-2">
+            <div className="flex justify-center gap-3">
               {featuredPreviews.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentFeature(index)}
-                  className={`h-2 rounded-full transition-all ${
-                    index === currentFeature ? 'w-8 bg-cyan-400' : 'w-2 bg-gray-500'
+                  className={`h-3 rounded-full transition-all touch-manipulation ${
+                    index === currentFeature ? 'w-12 bg-cyan-400' : 'w-3 bg-gray-500'
                   }`}
+                  style={{ 
+                    WebkitTapHighlightColor: 'transparent',
+                    minWidth: index === currentFeature ? '48px' : '24px',
+                    minHeight: '24px'
+                  }}
+                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
@@ -153,22 +162,22 @@ export default function HomePage() {
         <section className="py-12 px-6">
           <div className="max-w-6xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Link href="/predictions" className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:border-cyan-400 transition-all transform hover:scale-105">
+              <Link href="/predictions" className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border-2 border-white/20 hover:border-cyan-400 active:border-cyan-500 transition-all transform hover:scale-105 active:scale-95 cursor-pointer touch-manipulation" style={{ WebkitTapHighlightColor: 'transparent', minHeight: '120px' }}>
                 <div className="text-4xl mb-4">🎯</div>
                 <h3 className="text-xl font-bold text-white mb-2">Make Predictions</h3>
-                <p className="text-gray-300">Start predicting and earn rewards</p>
+                <p className="text-gray-300 text-sm">Start predicting and earn rewards</p>
               </Link>
 
-              <Link href="/features" className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:border-purple-400 transition-all transform hover:scale-105">
+              <Link href="/features" className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border-2 border-white/20 hover:border-purple-400 active:border-purple-500 transition-all transform hover:scale-105 active:scale-95 cursor-pointer touch-manipulation" style={{ WebkitTapHighlightColor: 'transparent', minHeight: '120px' }}>
                 <div className="text-4xl mb-4">🌟</div>
                 <h3 className="text-xl font-bold text-white mb-2">Explore Features</h3>
-                <p className="text-gray-300">Discover all available tools</p>
+                <p className="text-gray-300 text-sm">Discover all available tools</p>
               </Link>
 
-              <Link href="/empire" className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20 hover:border-orange-400 transition-all transform hover:scale-105">
+              <Link href="/empire" className="bg-white/10 backdrop-blur-sm rounded-xl p-6 border-2 border-white/20 hover:border-orange-400 active:border-orange-500 transition-all transform hover:scale-105 active:scale-95 cursor-pointer touch-manipulation" style={{ WebkitTapHighlightColor: 'transparent', minHeight: '120px' }}>
                 <div className="text-4xl mb-4">👑</div>
                 <h3 className="text-xl font-bold text-white mb-2">Join Empire</h3>
-                <p className="text-gray-300">Build the future together</p>
+                <p className="text-gray-300 text-sm">Build the future together</p>
               </Link>
             </div>
           </div>
@@ -209,11 +218,11 @@ export default function HomePage() {
             <p className="text-xl text-gray-300 mb-8">
               Join thousands of users making accurate predictions with AI-powered insights
             </p>
-            <div className="flex gap-4 justify-center">
-              <button className="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full text-white font-bold text-lg hover:scale-105 transition-transform">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button className="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 rounded-full text-white font-bold text-lg hover:scale-105 active:scale-95 transition-transform touch-manipulation shadow-lg hover:shadow-green-500/50" style={{ WebkitTapHighlightColor: 'transparent', minHeight: '56px' }}>
                 Get Started Free
               </button>
-              <button className="px-8 py-4 bg-white/10 backdrop-blur-sm rounded-full text-white font-bold text-lg border border-white/20 hover:bg-white/20 transition">
+              <button className="px-8 py-4 bg-white/10 backdrop-blur-sm rounded-full text-white font-bold text-lg border-2 border-white/20 hover:bg-white/20 active:bg-white/30 transition touch-manipulation shadow-lg" style={{ WebkitTapHighlightColor: 'transparent', minHeight: '56px' }}>
                 Learn More
               </button>
             </div>

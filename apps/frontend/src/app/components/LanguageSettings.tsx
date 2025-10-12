@@ -12,6 +12,8 @@ export default function LanguageSettings() {
   const { updatePreferences } = useUserPreferences();
 
   const handleLanguageChange = async (newLocale: Locale) => {
+    if (newLocale === locale) return;
+    
     // Set the locale cookie with proper attributes
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
     
@@ -19,13 +21,14 @@ export default function LanguageSettings() {
     localStorage.setItem('preferredLocale', newLocale);
     
     // Update user preferences
-    await updatePreferences({ language: newLocale });
+    try {
+      await updatePreferences({ language: newLocale });
+    } catch (error) {
+      console.error('Failed to update preferences:', error);
+    }
     
-    // Use Next.js navigation
-    router.refresh();
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+    // Force reload to apply new locale
+    window.location.href = window.location.pathname;
   };
 
   return (

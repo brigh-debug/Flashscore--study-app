@@ -83,6 +83,29 @@ cd apps/backend/ml && python main.py
 - **ML Service (FastAPI)**: Port 8000 (0.0.0.0)
 
 ## Recent Changes
+- **2025-10-12**: Added enhanced Kids Mode, Match Tracker, and iOS-style features
+  - **Kids Mode Dashboard**: Interactive educational sports quizzes with achievement system
+    - Multi-sport trivia (NFL, NBA, MLB, Soccer) with difficulty levels
+    - Badge collection system with animated rewards (🏆⚡🎯🌟👑)
+    - Safe learning environment with strict COPPA compliance (no betting under 13)
+    - Colorful, engaging UI designed for children
+  - **Flashscore-inspired Match Tracker**: Real-time match tracking with purely visual status indicators
+    - Green theme throughout with soccer shoe icons
+    - Visual-only status system (NO text labels):
+      - 🟢 Active: Pulsing green circle + progress bars
+      - 🟠 Halftime: Amber circle + two-tone bars
+      - ⚪ Completed: Gray circle + square symbol
+      - 🔵 Upcoming: Blue circle + animated pulsing bars
+    - Live score updates with match progress tracking
+    - Clean, minimalist layout inspired by Flashscore design
+  - **iOS-Style Features**: Native app-like experience
+    - Haptic feedback integration for interactive elements
+    - Pull-to-refresh gesture for content updates
+    - Bottom sheet modals for smooth interactions
+    - Dark mode support with system preference detection
+  - **Navigation Updates**: Added "Matches" and "Kids Mode" to main navigation
+  - **Documentation**: Created comprehensive feature brainstorm (docs/NEW_FEATURES_BRAINSTORM.md)
+
 - **2025-10-12**: Migrated project from Vercel to Replit
   - Successfully installed all pnpm dependencies (1381 packages)
   - Configured frontend workflow on port 5000 with 0.0.0.0 binding
