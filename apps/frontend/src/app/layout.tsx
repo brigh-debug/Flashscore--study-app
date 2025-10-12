@@ -9,8 +9,8 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from "next";
 import PWAServiceWorker from "./components/PWAServiceWorker";
 import PushNotificationManager from "./components/PushNotificationManager";
-import ErrorBoundary from "./components/ErrorBoundary/ErrorBoundary";
 import MobilePerformanceOptimizer from "./components/MobilePerformanceOptimizer";
+import ErrorBoundaryWithPerformance from "./components/ErrorBoundary/ErrorBoundaryWithPerformance";
 
 export const metadata: Metadata = {
   title: "Sports Central",
@@ -58,17 +58,19 @@ export default async function RootLayout({
         />
       </head>
       <body className="sports">
-        <NextIntlClientProvider messages={messages} locale={locale}>
-          <KidsModeProvider>
-            <UserPreferencesProvider>
-              <PWAServiceWorker />
-              <PushNotificationManager />
-              {children}
-              <Analytics />
-              <SpeedInsights />
-            </UserPreferencesProvider>
-          </KidsModeProvider>
-        </NextIntlClientProvider>
+        <ErrorBoundaryWithPerformance>
+          <NextIntlClientProvider messages={messages} locale={locale}>
+            <KidsModeProvider>
+              <UserPreferencesProvider>
+                <PWAServiceWorker />
+                <PushNotificationManager />
+                {children}
+                <Analytics />
+                <SpeedInsights />
+              </UserPreferencesProvider>
+            </KidsModeProvider>
+          </NextIntlClientProvider>
+        </ErrorBoundaryWithPerformance>
       </body>
     </html>
   );
