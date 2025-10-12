@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import ComprehensiveSportsHub from "@/app/components/ComprehensiveSportsHub";
 import AuthorsSidebar from "@/app/components/AuthorsSidebar";
+import LanguageSwitcher from "@/app/components/LanguageSwitcher";
+import NavBar from "@/app/components/NavBar";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -56,9 +58,15 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
+      <NavBar />
       <AuthorsSidebar />
       
-      <div className="ml-80">
+      {/* Language Switcher - Fixed Position */}
+      <div className="fixed top-20 right-6 z-40">
+        <LanguageSwitcher />
+      </div>
+      
+      <div className="ml-80 mt-16">
         {/* Hero Section with Live Stats */}
         <section className="relative overflow-hidden py-12 px-6">
           <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 animate-pulse"></div>

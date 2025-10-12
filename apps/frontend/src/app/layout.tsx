@@ -58,11 +58,17 @@ export default async function RootLayout({
         />
       </head>
       <body className="sports">
-        <PWAServiceWorker />
-        <PushNotificationManager />
-        {children}
-        <Analytics />
-        <SpeedInsights />
+        <NextIntlClientProvider messages={messages} locale={locale}>
+          <KidsModeProvider>
+            <UserPreferencesProvider>
+              <PWAServiceWorker />
+              <PushNotificationManager />
+              {children}
+              <Analytics />
+              <SpeedInsights />
+            </UserPreferencesProvider>
+          </KidsModeProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
