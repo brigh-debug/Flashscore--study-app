@@ -12,9 +12,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const mlServiceUrl = process.env.ML_SERVICE_URL || 'http://0.0.0.0:8000';
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://0.0.0.0:3001';
 
-    const response = await fetch(`${mlServiceUrl}/predict`, {
+    const response = await fetch(`${backendUrl}/ml/predict`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

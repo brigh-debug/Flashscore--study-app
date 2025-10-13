@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const mlServiceUrl = process.env.ML_SERVICE_URL || "http://0.0.0.0:8000";
-    const response = await fetch(`${mlServiceUrl}/health`, {
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://0.0.0.0:3001";
+    const response = await fetch(`${backendUrl}/ml-status`, {
       signal: AbortSignal.timeout(5000),
       headers: {
         'Accept': 'application/json',
