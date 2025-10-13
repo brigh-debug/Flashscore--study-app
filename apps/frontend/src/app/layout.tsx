@@ -11,6 +11,7 @@ import PWAServiceWorker from "./components/PWAServiceWorker";
 import PushNotificationManager from "./components/PushNotificationManager";
 import MobilePerformanceOptimizer from "./components/MobilePerformanceOptimizer";
 import ErrorBoundaryWithPerformance from "./components/ErrorBoundary/ErrorBoundaryWithPerformance";
+import StaticOptimizer from "./components/StaticOptimizer";
 
 export const metadata: Metadata = {
   title: "Sports Central",
@@ -64,6 +65,7 @@ export default async function RootLayout({
               <UserPreferencesProvider>
                 <PWAServiceWorker />
                 <PushNotificationManager />
+                <StaticOptimizer />
                 {children}
                 <Analytics />
                 <SpeedInsights />

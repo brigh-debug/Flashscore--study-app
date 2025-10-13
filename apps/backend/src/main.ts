@@ -67,6 +67,16 @@ fastify.register(rateLimit, {
   timeWindow: '1 minute'
 });
 
+// Register performance optimizations
+import { responseCacheMiddleware } from './middleware/responseCache';
+import { optimizeMongoDB } from './middleware/queryOptimizer';
+
+// Add response caching for GET requests
+fastify.addHook('onRequest', responseCacheMiddleware({ ttl: 60000, keyPrefix: 'api' }));
+
+// Optimize MongoDB
+optimizeMongoDB();
+
 // MongoDB connection with verification
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/sportscentral";
 const REQUIRE_DB = process.env.REQUIRE_DB === 'true' || process.env.NODE_ENV === 'production';
