@@ -1,6 +1,14 @@
 "use client";
-import React, { useState, useEffect, useRef } from 'react';
+
+import React, { useState, useEffect, lazy, Suspense, useRef } from 'react';
 import { useMobile } from '@hooks/useMobile';
+import dynamic from 'next/dynamic';
+
+// Lazy load heavy components
+const LiveMatchTracker = dynamic(() => import('./LiveMatchTracker'), { 
+  loading: () => <div>Loading tracker...</div>,
+  ssr: false 
+});
 
 interface EnhancedMatch {
   id: string;
@@ -462,6 +470,10 @@ const ComprehensiveSportsHub: React.FC = () => {
             {filteredMatches.map((match, index) => (
               <MatchCard key={`${match.id}-${index}`} match={match} />
             ))}
+            {/* Render the dynamically imported LiveMatchTracker component here */}
+            <Suspense fallback={<div>Loading tracker...</div>}>
+              <LiveMatchTracker />
+            </Suspense>
           </div>
         )}
 
