@@ -13,24 +13,24 @@ export const localeNames: Record<Locale, string> = {
 
 export default getRequestConfig(async ({ requestLocale }) => {
   // Use the locale from the request (set by middleware)
-  let locale = await requestLocale;
+  const locale = await requestLocale;
 
   // Validate and fallback to default
-  if (!locale || !locales.includes(locale as Locale)) {
-    locale = 'en';
-  }
+  const validLocale = locale && locales.includes(locale as Locale) ? locale : 'en';
 
   try {
+    const messages = (await import(`./messages/${validLocale}.json`)).default;
     return {
-      locale,
-      messages: (await import(`./messages/${locale}.json`)).default
+      locale: validLocale,
+      messages
     };
   } catch (error) {
-    console.error(`Failed to load messages for locale: ${locale}`, error);
+    console.error(`Failed to load messages for locale: ${validLocale}`, error);
     // Fallback to English if locale messages fail to load
+    const fallbackMessages = (await import(`./messages/en.json`)).default;
     return {
       locale: 'en',
-      messages: (await import(`./messages/en.json`)).default
+      messages: fallbackMessages
     };
   }
 });

@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
@@ -20,9 +19,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const mlServiceUrl = process.env.ML_SERVICE_URL || 'http://0.0.0.0:8000';
-    
-    const response = await fetch(`${mlServiceUrl}/train`, {
+    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://0.0.0.0:3001';
+
+    const response = await fetch(`${BACKEND_URL}/ml/train`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

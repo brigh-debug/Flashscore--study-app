@@ -43,35 +43,40 @@ export default function LanguageSwitcher() {
   const handleLanguageChange = async (newLocale: Locale) => {
     setIsOpen(false);
     
+    if (newLocale === locale) return;
+    
     // Set the cookie with proper attributes
     document.cookie = `NEXT_LOCALE=${newLocale}; path=/; max-age=31536000; SameSite=Lax`;
     
     // Update preferences
-    await updatePreferences({ language: newLocale });
+    try {
+      await updatePreferences({ language: newLocale });
+    } catch (error) {
+      console.error('Failed to update preferences:', error);
+    }
+    
     localStorage.setItem('preferredLocale', newLocale);
     
-    // Use Next.js router for smooth navigation
-    const currentPath = pathname || '/';
-    router.refresh();
-    
-    // Small delay to ensure cookie is set before refresh
-    setTimeout(() => {
-      window.location.reload();
-    }, 100);
+    // Force reload to apply new locale
+    window.location.href = window.location.pathname;
   };
 
   return (
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition-all border border-white/20"
+        className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-white/10 hover:bg-white/20 transition-all border border-white/20 hover:border-cyan-400/50 shadow-md hover:shadow-lg group"
+        style={{
+          minHeight: '44px',
+          minWidth: '44px'
+        }}
         aria-label={t('selectLanguage')}
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        <Globe className="w-5 h-5" />
-        <span className="font-medium">{localeNames[locale]}</span>
-        <ChevronDown className={`w-4 h-4 transform transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        <Globe className="w-5 h-5 text-cyan-300 group-hover:text-cyan-200 transition-colors" />
+        <span className="font-semibold text-white text-sm hidden md:inline">{localeNames[locale]}</span>
+        <ChevronDown className={`w-4 h-4 text-cyan-300 group-hover:text-cyan-200 transform transition-all ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (

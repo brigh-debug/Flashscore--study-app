@@ -131,12 +131,12 @@ async function getMlPrediction(match: any): Promise<any> {
 // GET - Fetch all predictions
 export async function GET(request: Request) {
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://0.0.0.0:3001';
+    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://0.0.0.0:3001';
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '50');
 
     try {
-      const response = await fetch(`${backendUrl}/api/predictions?limit=${limit}`, {
+      const response = await fetch(`${BACKEND_URL}/api/predictions?limit=${limit}`, {
         signal: AbortSignal.timeout(5000),
         headers: {
           'Content-Type': 'application/json'
