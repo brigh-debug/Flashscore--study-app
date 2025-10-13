@@ -3,6 +3,24 @@ const withNextIntl = createNextIntlPlugin("./src/i18n.ts");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Production optimizations
+  compress: true,
+  poweredByHeader: false,
+  
+  // Optimize bundle size
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: ['@/app/components'],
+  },
+  
+  // Image optimization
+  images: {
+    formats: ['image/webp', 'image/avif'],
+    minimumCacheTTL: 60,
+  },
+  
+  // Enable SWC minification
+  swcMinify: true,
   allowedDevOrigins: ['*.replit.dev'],
   reactStrictMode: true,
   swcMinify: true,
