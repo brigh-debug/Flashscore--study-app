@@ -1,6 +1,6 @@
 {
-  "buildCommand": "pnpm install --no-frozen-lockfile && pnpm --filter @magajico/frontend build",
-  "installCommand": "pnpm install --frozen-lockfile",
+  "buildCommand": "pnpm install 2>&1 && pnpm --filter @magajico/frontend build 2>&1",
+  "installCommand": "pnpm install",
   "outputDirectory": "apps/frontend/.next",
   "framework": "nextjs",
   "regions": ["iad1"],
