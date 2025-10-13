@@ -3,8 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://0.0.0.0:3001';
-    const response = await fetch(`${backendUrl}/api/predictions`, {
+    const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://0.0.0.0:3001';
+    const response = await fetch(`${BACKEND_URL}/api/predictions`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

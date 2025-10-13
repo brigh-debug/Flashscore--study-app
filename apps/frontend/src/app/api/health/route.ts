@@ -19,8 +19,7 @@ interface HealthStatus {
 }
 
 export async function GET(request: NextRequest) {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://0.0.0.0:3001';
-  const mlUrl = process.env.NEXT_PUBLIC_ML_URL || 'http://0.0.0.0:8000';
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://0.0.0.0:3001';
 
   const services = {
     frontend: 'ok',
@@ -31,7 +30,7 @@ export async function GET(request: NextRequest) {
 
   // Check backend health
   try {
-    const backendRes = await fetch(`${backendUrl}/api/health`, { 
+    const backendRes = await fetch(`${BACKEND_URL}/api/health`, { 
       signal: AbortSignal.timeout(3000),
       headers: { 'Content-Type': 'application/json' }
     });
@@ -44,9 +43,9 @@ export async function GET(request: NextRequest) {
     services.database = 'offline';
   }
 
-  // Check ML service health
+  // Check ML service health via backend proxy
   try {
-    const mlRes = await fetch(`${mlUrl}/health`, { 
+    const mlRes = await fetch(`${BACKEND_URL}/ml-status`, { 
       signal: AbortSignal.timeout(3000),
       headers: { 'Content-Type': 'application/json' }
     });
